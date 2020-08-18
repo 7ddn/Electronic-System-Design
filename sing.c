@@ -1,13 +1,32 @@
 #include "sys_cfg.h"
 #include "display.h"
 #include "sys_fun.h"
+#include "math.h"
 
-void playnote(int note, char range){
-    bee_Speak = 0;
-    TMOD = 0x10;
-    ET1 = 1;
-    EA = 1;
-    TR1 = 1;
+uchar GetCycle(char note, char range){
+    switch (note)
+    {
+    case 0x40: // C
+        return floor(956/range);
+
+    case 0x20: // D
+        return floor(851/range);
     
+    case 0x10: // E
+        return floor(758/range);
 
+    case 0x08: // F
+        return floor(716/range);
+    
+    case 0x04: // G
+        return floor(637/range);
+
+    case 0x02: // A
+        return floor(568/range);
+
+    case 0x01: // B
+        return floor(506/range);
+    default:
+        break;
+    }
 }

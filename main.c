@@ -6,16 +6,23 @@
 #include "sys_fun.h"
 #include "songs.h"
 #include "display.h"
+#include "sing.h"
 
 uchar port_status;
 uchar key;
 unsigned char Count;
+double range = 1;
+uchar iniT;
 
 void Time0_Int() interrupt 1
 {
 	 TH0 = 0xDC;
 	 TL0 = 0x00;
 	 Count++;   
+}
+
+void Timer1() interrupt 3{
+	bee_Speak = ~bee_Speak;
 }
 
 void main()
@@ -30,14 +37,14 @@ void main()
 	P3M0=0x00;
 	
 	Ini_Lcd();//液晶初始化子程序
-	Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序			
+	/*Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序			
 	Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
 	Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-	Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
+	Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
 	while(1)
 	{
 		
-		if((ctrl_port_check()&0xF0)==0xF0)
+		/*if((ctrl_port_check()&0xF0)==0xF0)
 		{  	
 			s1_s2_check();
 			P4M1=0x00;
@@ -48,7 +55,7 @@ void main()
 			Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
 			Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
 			Delay_xMs(2500);		
-		}
+		}*/
 		
 		if(!(ctrl_port_check()&0x80))
 		{ 
@@ -102,69 +109,18 @@ void main()
 		} 
 		else if(!(ctrl_port_check()&0x20))
 		{ 
-			 s1_s2_check();
-			 Disp(1,0,16,"系统进行光耦检测");//显示数据到LCD12864子程序
-			 OPT_CHECK = 0xFF;
-			 //if((OPT_CHECK&0x7F) != 0x7F)
-			 {
-  				 if(OPT_CHECK&0x01)
-				 {
-				   ShowQQChar(0x90,"1:高",2);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x90,"1:低",2);
-				 }
-  				 if(OPT_CHECK&0x02)
-				 {
-				   ShowQQChar(0x92,"2:高",2);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x92,"2:低",2);
-				 }
-  				 if(OPT_CHECK&0x04)
-				 {
-				   ShowQQChar(0x94,"3:高",2);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x94,"3:低",2);
-				 }
-  				 if(OPT_CHECK&0x08)
-				 {
-				   ShowQQChar(0x96,"4:高",2);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x96,"4:低",2);
-				 }
-  				 if(OPT_CHECK&0x10)
-				 {
-				   ShowQQChar(0x88,"5:高",2);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x88,"5:低",2);
-				 }
-  				 if(OPT_CHECK&0x20)
-				 {
-				   ShowQQChar(0x8A,"6:高",2);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x8A,"6:低",2);
-				 }
-  				 if(OPT_CHECK&0x40)
-				 {
-				   ShowQQChar(0x8C,"7:高  ",3);
-				 }
-				 else
-				 {
-				   ShowQQChar(0x8C,"7:低  ",3);
-				 }				 
-				 
-				 Delay_xMs(2500);
+			Disp(1,0,16,"系统进行光耦检测");//显示数据到LCD12864子程序
+			while(!(ctrl_port_check()&0x20)) {
+			 	s1_s2_check();
+			 	OPT_CHECK = 0xFF;
+			 	iniT = 0xFFFF - GetCycle(OPT_CHECK, range) + 1;
+			 	TMOD = 0x10;
+			 	ET1 = 1;
+			 	EA = 1;
+			 	TH1 = iniT >> 8;
+			 	TL1 = iniT & 0x00FF;
+			 	TR1 = 1;
+			 	Delay_xMs(2500);
 			}
 		} 
 

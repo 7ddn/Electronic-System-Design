@@ -295,6 +295,7 @@ void Delay_1ms(uint x)
 	}  
 }
 
+
 /*************LCD串口时指令和数据之间的延时********/
 void delayNus(uchar x)
 {
