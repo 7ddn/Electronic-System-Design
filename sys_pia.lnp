@@ -1,0 +1,4 @@
+"main.obj",
+"display.obj" 
+TO "sys_pia" 
+RAMSIZE(256) 
