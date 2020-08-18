@@ -1,9 +1,9 @@
-C51 COMPILER V9.52.0.0   MAIN                                                              06/02/2020 19:36:07 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2020 15:31:27 PAGE 1   
 
 
-C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN main.OBJ
-COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
 
 line level    source
 
@@ -22,203 +22,203 @@ line level    source
   13          
   14          void Time0_Int() interrupt 1
   15          {
-  16   1               TH0 = 0xDC;
-  17   1               TL0 = 0x00;
-  18   1               Count++;   
+  16   1         TH0 = 0xDC;
+  17   1         TL0 = 0x00;
+  18   1         Count++;   
   19   1      }
   20          
   21          void main()
   22          {
-  23   1              P5M1=0x00;
-  24   1              P5M0=0x30;
-  25   1              
-  26   1              P4M1=0xC0;
-  27   1              P4M0=0x00;
-  28   1              
-  29   1              P3M1=0x00;
-  30   1              P3M0=0x00;
-  31   1              
-  32   1              Ini_Lcd();//液晶初始化子程序
-  33   1              Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序                      
-  34   1              Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
-  35   1              Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-  36   1              Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
-  37   1              while(1)
-  38   1              {
-  39   2                      
+  23   1        P5M1=0x00;
+  24   1        P5M0=0x30;
+  25   1        
+  26   1        P4M1=0xC0;
+  27   1        P4M0=0x00;
+  28   1        
+  29   1        P3M1=0x00;
+  30   1        P3M0=0x00;
+  31   1        
+  32   1        Ini_Lcd();//液晶初始化子程序
+  33   1        Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
+  34   1        Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
+  35   1        Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
+  36   1        Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
+  37   1        while(1)
+  38   1        {
+  39   2          
   40   2      
-  41   2                      
-  42   2                      if((ctrl_port_check()&0xF0)==0xF0)
-  43   2                      {       
-  44   3                              s1_s2_check();
-  45   3                              P4M1=0x00;
-  46   3                              P4M0=0x00;
-  47   3                              Ini_Lcd();//液晶初始化子程序
-  48   3                              Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序                      
-  49   3                              Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
-  50   3                              Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-  51   3                              Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
-  52   3                              Delay_xMs(2500);                
-  53   3                      }
-  54   2                      
-  55   2                      if(!(ctrl_port_check()&0x80))
-C51 COMPILER V9.52.0.0   MAIN                                                              06/02/2020 19:36:07 PAGE 2   
+  41   2          
+  42   2          if((ctrl_port_check()&0xF0)==0xF0)
+  43   2          {   
+  44   3            s1_s2_check();
+  45   3            P4M1=0x00;
+  46   3            P4M0=0x00;
+  47   3            Ini_Lcd();//液晶初始化子程序
+  48   3            Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
+  49   3            Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
+  50   3            Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
+  51   3            Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
+  52   3            Delay_xMs(2500);    
+  53   3          }
+  54   2          
+  55   2          if(!(ctrl_port_check()&0x80))
+C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2020 15:31:27 PAGE 2   
 
-  56   2                      { 
-  57   3                              KeyIO=0xF0;
-  58   3                              Ini_Lcd();//液晶初始化子程序
-  59   3                              Disp(1,0,16,"系统进行按键检测");//显示数据到LCD12864子程序
-  60   3                              Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-  61   3                              Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序                      
-  62   3                              while(!(ctrl_port_check()&0x80))
-  63   3                              {
-  64   4                                      s1_s2_check();                          
-  65   4                                      if((P1&0xf0)!=0xf0) //如果有键按下
-  66   4                              {
-  67   5                                  Delay_xMs(100);   //延时去抖动
-  68   5                                  if((KeyIO&0xf0)!=0xf0)   //再判断
-  69   5                                  {
-  70   6                                                      key=scankey();
-  71   6                                                      switch(key)
-  72   6                                                      {
-  73   7                                                              case 11:Disp(2,1,12,"KEY_VALUE:01");    break;//显示数据到LCD12864子程序
-  74   7                                                              case 12:Disp(2,1,12,"KEY_VALUE:02");    break;//显示数据到LCD12864子程序
-  75   7                                                              case 13:Disp(2,1,12,"KEY_VALUE:03");    break;//显示数据到LCD12864子程序
-  76   7                                                              case 14:Disp(2,1,12,"KEY_VALUE:04");    break;//显示数据到LCD12864子程序
-  77   7                                                              case 21:Disp(2,1,12,"KEY_VALUE:05");    break;//显示数据到LCD12864子程序
-  78   7                                                              case 22:Disp(2,1,12,"KEY_VALUE:06");    break;//显示数据到LCD12864子程序
-  79   7                                                              case 23:Disp(2,1,12,"KEY_VALUE:07");    break;//显示数据到LCD12864子程序
-  80   7                                                              case 24:Disp(2,1,12,"KEY_VALUE:08");    break;//显示数据到LCD12864子程序
-  81   7                                                              case 31:Disp(2,1,12,"KEY_VALUE:09");    break;//显示数据到LCD12864子程序
-  82   7                                                              case 32:Disp(2,1,12,"KEY_VALUE:10");    break;//显示数据到LCD12864子程序
-  83   7                                                              case 33:Disp(2,1,12,"KEY_VALUE:11");    break;//显示数据到LCD12864子程序
-  84   7                                                              case 34:Disp(2,1,12,"KEY_VALUE:12");    break;//显示数据到LCD12864子程序
-  85   7                                                              case 41:Disp(2,1,12,"KEY_VALUE:13");    break;//显示数据到LCD12864子程序
-  86   7                                                              case 42:Disp(2,1,12,"KEY_VALUE:14");    break;//显示数据到LCD12864子程序
-  87   7                                                              case 43:Disp(2,1,12,"KEY_VALUE:15");    break;//显示数据到LCD12864子程序
-  88   7                                                              case 44:Disp(2,1,12,"KEY_VALUE:16");    break;//显示数据到LCD12864子程序
-  89   7                                                      }
-  90   6                                              }   
-  91   5                                      }
-  92   4                              }
-  93   3                      }
-  94   2                      else if(!(ctrl_port_check()&0x40))
-  95   2                      { 
-  96   3                              s1_s2_check();
-  97   3                              Ini_Lcd();//液晶初始化子程序
-  98   3                              Disp(1,0,16,"系统进行音乐播放");//显示数据到LCD12864子程序
-  99   3                              Disp(2,1,13,"Playing Music");//显示数据到LCD12864子程序  
- 100   3                              Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
- 101   3                              Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序              
- 102   3                              Time0_Init();
- 103   3                              Play_Song(0);                    
- 104   3                      } 
- 105   2                      else if(!(ctrl_port_check()&0x20))
- 106   2                      { 
- 107   3                               s1_s2_check();
- 108   3                               Disp(1,0,16,"系统进行光耦检测");//显示数据到LCD12864子程序
- 109   3                               OPT_CHECK = 0xFF;
- 110   3                               //if((OPT_CHECK&0x7F) != 0x7F)
- 111   3                               {
- 112   4                                       if(OPT_CHECK&0x01)
- 113   4                                       {
- 114   5                                         ShowQQChar(0x90,"1:高",2);
- 115   5                                       }
- 116   4                                       else
- 117   4                                       {
-C51 COMPILER V9.52.0.0   MAIN                                                              06/02/2020 19:36:07 PAGE 3   
+  56   2          { 
+  57   3            KeyIO=0xF0;
+  58   3            Ini_Lcd();//液晶初始化子程序
+  59   3            Disp(1,0,16,"系统进行按键检测");//显示数据到LCD12864子程序
+  60   3            Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
+  61   3            Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
+  62   3            while(!(ctrl_port_check()&0x80))
+  63   3            {
+  64   4              s1_s2_check();        
+  65   4              if((P1&0xf0)!=0xf0) //如果有键按下
+  66   4                  {
+  67   5                      Delay_xMs(100);   //延时去抖动
+  68   5                      if((KeyIO&0xf0)!=0xf0)   //再判断
+  69   5                      {
+  70   6                  key=scankey();
+  71   6                  switch(key)
+  72   6                  {
+  73   7                    case 11:Disp(2,1,12,"KEY_VALUE:01");  break;//显示数据到LCD12864子程序
+  74   7                    case 12:Disp(2,1,12,"KEY_VALUE:02");  break;//显示数据到LCD12864子程序
+  75   7                    case 13:Disp(2,1,12,"KEY_VALUE:03");  break;//显示数据到LCD12864子程序
+  76   7                    case 14:Disp(2,1,12,"KEY_VALUE:04");  break;//显示数据到LCD12864子程序
+  77   7                    case 21:Disp(2,1,12,"KEY_VALUE:05");  break;//显示数据到LCD12864子程序
+  78   7                    case 22:Disp(2,1,12,"KEY_VALUE:06");  break;//显示数据到LCD12864子程序
+  79   7                    case 23:Disp(2,1,12,"KEY_VALUE:07");  break;//显示数据到LCD12864子程序
+  80   7                    case 24:Disp(2,1,12,"KEY_VALUE:08");  break;//显示数据到LCD12864子程序
+  81   7                    case 31:Disp(2,1,12,"KEY_VALUE:09");  break;//显示数据到LCD12864子程序
+  82   7                    case 32:Disp(2,1,12,"KEY_VALUE:10");  break;//显示数据到LCD12864子程序
+  83   7                    case 33:Disp(2,1,12,"KEY_VALUE:11");  break;//显示数据到LCD12864子程序
+  84   7                    case 34:Disp(2,1,12,"KEY_VALUE:12");  break;//显示数据到LCD12864子程序
+  85   7                    case 41:Disp(2,1,12,"KEY_VALUE:13");  break;//显示数据到LCD12864子程序
+  86   7                    case 42:Disp(2,1,12,"KEY_VALUE:14");  break;//显示数据到LCD12864子程序
+  87   7                    case 43:Disp(2,1,12,"KEY_VALUE:15");  break;//显示数据到LCD12864子程序
+  88   7                    case 44:Disp(2,1,12,"KEY_VALUE:16");  break;//显示数据到LCD12864子程序
+  89   7                  }
+  90   6                }   
+  91   5              }
+  92   4            }
+  93   3          }
+  94   2          else if(!(ctrl_port_check()&0x40))
+  95   2          { 
+  96   3            s1_s2_check();
+  97   3            Ini_Lcd();//液晶初始化子程序
+  98   3            Disp(1,0,16,"系统进行音乐播放");//显示数据到LCD12864子程序
+  99   3            Disp(2,1,13,"Playing Music");//显示数据到LCD12864子程序  
+ 100   3            Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
+ 101   3            Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序    
+ 102   3            Time0_Init();
+ 103   3            Play_Song(0);      
+ 104   3          } 
+ 105   2          else if(!(ctrl_port_check()&0x20))
+ 106   2          { 
+ 107   3             s1_s2_check();
+ 108   3             Disp(1,0,16,"系统进行光耦检测");//显示数据到LCD12864子程序
+ 109   3             OPT_CHECK = 0xFF;
+ 110   3             //if((OPT_CHECK&0x7F) != 0x7F)
+ 111   3             {
+ 112   4                 if(OPT_CHECK&0x01)
+ 113   4               {
+ 114   5                 ShowQQChar(0x90,"1:高",2);
+ 115   5               }
+ 116   4               else
+ 117   4               {
+C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2020 15:31:27 PAGE 3   
 
- 118   5                                         ShowQQChar(0x90,"1:低",2);
- 119   5                                       }
- 120   4                                       if(OPT_CHECK&0x02)
- 121   4                                       {
- 122   5                                         ShowQQChar(0x92,"2:高",2);
- 123   5                                       }
- 124   4                                       else
- 125   4                                       {
- 126   5                                         ShowQQChar(0x92,"2:低",2);
- 127   5                                       }
- 128   4                                       if(OPT_CHECK&0x04)
- 129   4                                       {
- 130   5                                         ShowQQChar(0x94,"3:高",2);
- 131   5                                       }
- 132   4                                       else
- 133   4                                       {
- 134   5                                         ShowQQChar(0x94,"3:低",2);
- 135   5                                       }
- 136   4                                       if(OPT_CHECK&0x08)
- 137   4                                       {
- 138   5                                         ShowQQChar(0x96,"4:高",2);
- 139   5                                       }
- 140   4                                       else
- 141   4                                       {
- 142   5                                         ShowQQChar(0x96,"4:低",2);
- 143   5                                       }
- 144   4                                       if(OPT_CHECK&0x10)
- 145   4                                       {
- 146   5                                         ShowQQChar(0x88,"5:高",2);
- 147   5                                       }
- 148   4                                       else
- 149   4                                       {
- 150   5                                         ShowQQChar(0x88,"5:低",2);
- 151   5                                       }
- 152   4                                       if(OPT_CHECK&0x20)
- 153   4                                       {
- 154   5                                         ShowQQChar(0x8A,"6:高",2);
- 155   5                                       }
- 156   4                                       else
- 157   4                                       {
- 158   5                                         ShowQQChar(0x8A,"6:低",2);
- 159   5                                       }
- 160   4                                       if(OPT_CHECK&0x40)
- 161   4                                       {
- 162   5                                         ShowQQChar(0x8C,"7:高  ",3);
- 163   5                                       }
- 164   4                                       else
- 165   4                                       {
- 166   5                                         ShowQQChar(0x8C,"7:低  ",3);
- 167   5                                       }                               
- 168   4                                       
- 169   4                                       Delay_xMs(2500);
- 170   4                                       
- 171   4                                       
+ 118   5                 ShowQQChar(0x90,"1:低",2);
+ 119   5               }
+ 120   4                 if(OPT_CHECK&0x02)
+ 121   4               {
+ 122   5                 ShowQQChar(0x92,"2:高",2);
+ 123   5               }
+ 124   4               else
+ 125   4               {
+ 126   5                 ShowQQChar(0x92,"2:低",2);
+ 127   5               }
+ 128   4                 if(OPT_CHECK&0x04)
+ 129   4               {
+ 130   5                 ShowQQChar(0x94,"3:高",2);
+ 131   5               }
+ 132   4               else
+ 133   4               {
+ 134   5                 ShowQQChar(0x94,"3:低",2);
+ 135   5               }
+ 136   4                 if(OPT_CHECK&0x08)
+ 137   4               {
+ 138   5                 ShowQQChar(0x96,"4:高",2);
+ 139   5               }
+ 140   4               else
+ 141   4               {
+ 142   5                 ShowQQChar(0x96,"4:低",2);
+ 143   5               }
+ 144   4                 if(OPT_CHECK&0x10)
+ 145   4               {
+ 146   5                 ShowQQChar(0x88,"5:高",2);
+ 147   5               }
+ 148   4               else
+ 149   4               {
+ 150   5                 ShowQQChar(0x88,"5:低",2);
+ 151   5               }
+ 152   4                 if(OPT_CHECK&0x20)
+ 153   4               {
+ 154   5                 ShowQQChar(0x8A,"6:高",2);
+ 155   5               }
+ 156   4               else
+ 157   4               {
+ 158   5                 ShowQQChar(0x8A,"6:低",2);
+ 159   5               }
+ 160   4                 if(OPT_CHECK&0x40)
+ 161   4               {
+ 162   5                 ShowQQChar(0x8C,"7:高  ",3);
+ 163   5               }
+ 164   4               else
+ 165   4               {
+ 166   5                 ShowQQChar(0x8C,"7:低  ",3);
+ 167   5               }         
+ 168   4               
+ 169   4               //Delay_xMs(2500);
+ 170   4               
+ 171   4               
  172   4      /*
- 173   4                                       if(!(OPT_CHECK&0x01))
- 174   4                                       {
- 175   4                                         ShowQQChar(0x88,"01号光耦为低电平",8);
- 176   4                                       }
- 177   4                                       if(!(OPT_CHECK&0x02))
- 178   4                                       {
- 179   4                                         ShowQQChar(0x88,"02号光耦为低电平",8);
-C51 COMPILER V9.52.0.0   MAIN                                                              06/02/2020 19:36:07 PAGE 4   
+ 173   4               if(!(OPT_CHECK&0x01))
+ 174   4               {
+ 175   4                 ShowQQChar(0x88,"01号光耦为低电平",8);
+ 176   4               }
+ 177   4               if(!(OPT_CHECK&0x02))
+ 178   4               {
+ 179   4                 ShowQQChar(0x88,"02号光耦为低电平",8);
+C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2020 15:31:27 PAGE 4   
 
- 180   4                                       }
- 181   4                                       if(!(OPT_CHECK&0x04))
- 182   4                                       {
- 183   4                                         ShowQQChar(0x88,"03号光耦为低电平",8);
- 184   4                                       }
- 185   4                                       if(!(OPT_CHECK&0x08))
- 186   4                                       {
- 187   4                                         ShowQQChar(0x88,"04号光耦为低电平",8);
- 188   4                                       }
- 189   4                                       if(!(OPT_CHECK&0x10))
- 190   4                                       {
- 191   4                                         ShowQQChar(0x88,"05号光耦为低电平",8);
- 192   4                                       }
- 193   4                                       if(!(OPT_CHECK&0x20))
- 194   4                                       {
- 195   4                                         ShowQQChar(0x88,"06号光耦为低电平",8);
- 196   4                                       }
- 197   4                                       if(!(OPT_CHECK&0x40))
- 198   4                                       {
- 199   4                                         ShowQQChar(0x88,"07号光耦为低电平",8);
- 200   4                                       }
+ 180   4               }
+ 181   4               if(!(OPT_CHECK&0x04))
+ 182   4               {
+ 183   4                 ShowQQChar(0x88,"03号光耦为低电平",8);
+ 184   4               }
+ 185   4               if(!(OPT_CHECK&0x08))
+ 186   4               {
+ 187   4                 ShowQQChar(0x88,"04号光耦为低电平",8);
+ 188   4               }
+ 189   4               if(!(OPT_CHECK&0x10))
+ 190   4               {
+ 191   4                 ShowQQChar(0x88,"05号光耦为低电平",8);
+ 192   4               }
+ 193   4               if(!(OPT_CHECK&0x20))
+ 194   4               {
+ 195   4                 ShowQQChar(0x88,"06号光耦为低电平",8);
+ 196   4               }
+ 197   4               if(!(OPT_CHECK&0x40))
+ 198   4               {
+ 199   4                 ShowQQChar(0x88,"07号光耦为低电平",8);
+ 200   4               }
  201   4      */
- 202   4                                       Delay_xMs(250);
- 203   4                              }
- 204   3                      } 
+ 202   4               Delay_xMs(250);
+ 203   4            }
+ 204   3          } 
  205   2      
- 206   2              }
+ 206   2        }
  207   1      }
  208          
  209          /*******************定时器初始化********************/
@@ -232,100 +232,100 @@ line level    source
  217          /****************播放音乐*************************/
  218          void s1_s2_check(void)
  219          {
- 220   1                      if(P4&0x40) 
- 221   1                              DLED_1 =1;
- 222   1                      else    
- 223   1                              DLED_1 =0;
- 224   1                      
- 225   1                      if((P4&0x80)) 
- 226   1                              DLED_2 =1;
- 227   1                      else    
- 228   1                              DLED_2 =0;
- 229   1              }
+ 220   1          if(P4&0x40) 
+ 221   1            DLED_1 =1;
+ 222   1          else  
+ 223   1            DLED_1 =0;
+ 224   1          
+ 225   1          if((P4&0x80)) 
+ 226   1            DLED_2 =1;
+ 227   1          else  
+ 228   1            DLED_2 =0;
+ 229   1        }
  230          
  231          /****************播放音乐*************************/
  232          void Play_Song(unsigned char i)
  233          {
- 234   1               unsigned char Temp1,Temp2;
- 235   1               unsigned int Addr;
- 236   1               Count = 0;      
- 237   1               Addr = i * 217;  
- 238   1               while(!(ctrl_port_check()&0x40))
- 239   1               {
- 240   2                       Temp1 = SONG[Addr++];
- 241   2                   if ( Temp1 == 0xFF )         
-C51 COMPILER V9.52.0.0   MAIN                                                              06/02/2020 19:36:07 PAGE 5   
+ 234   1         unsigned char Temp1,Temp2;
+ 235   1         unsigned int Addr;
+ 236   1         Count = 0;      
+ 237   1         Addr = i * 217;  
+ 238   1         while(!(ctrl_port_check()&0x40))
+ 239   1         {
+ 240   2             Temp1 = SONG[Addr++];
+ 241   2             if ( Temp1 == 0xFF )         
+C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2020 15:31:27 PAGE 5   
 
- 242   2                   {
- 243   3                            TR0 = 0;                 
- 244   3                            Delay_xMs(100);
- 245   3                   }
- 246   2                   else if ( Temp1 == 0x00 )   
- 247   2                   {
- 248   3                      return;
- 249   3                   }
- 250   2                   else
- 251   2                   {
- 252   3                            Temp2 = SONG[Addr++];
- 253   3                            TR0 = 1;
- 254   3                                while(!(ctrl_port_check()&0x40))
- 255   3                                {
- 256   4                                   bee_Speak = ~bee_Speak;
- 257   4                                   Delay_xMs(Temp1);
- 258   4                                   if ( Temp2 == Count )
- 259   4                                   {
- 260   5                                      Count = 0;
- 261   5                                      break;
- 262   5                                   }
- 263   4                                }
- 264   3                   }
- 265   2              }
- 266   1              bee_Speak = 0;  //关闭蜂鸣器
+ 242   2             {
+ 243   3                TR0 = 0;                 
+ 244   3                Delay_xMs(100);
+ 245   3             }
+ 246   2             else if ( Temp1 == 0x00 )   
+ 247   2             {
+ 248   3                return;
+ 249   3             }
+ 250   2             else
+ 251   2             {
+ 252   3                Temp2 = SONG[Addr++];
+ 253   3                TR0 = 1;
+ 254   3              while(!(ctrl_port_check()&0x40))
+ 255   3              {
+ 256   4                 bee_Speak = ~bee_Speak;
+ 257   4                 Delay_xMs(Temp1);
+ 258   4                 if ( Temp2 == Count )
+ 259   4                 {
+ 260   5                    Count = 0;
+ 261   5                    break;
+ 262   5                 }
+ 263   4              }
+ 264   3             }
+ 265   2        }
+ 266   1        bee_Speak = 0;  //关闭蜂鸣器
  267   1      }
  268          
  269          /*****************检测控制端口的状态*****************/
  270          uchar ctrl_port_check(void)
  271          {
- 272   1                      SW_CTRL = 0xFF;
- 273   1                      return  SW_CTRL&0xF0;
+ 272   1          SW_CTRL = 0xFF;
+ 273   1          return  SW_CTRL&0xF0;
  274   1      }
  275          
  276          uchar scankey(void)//矩阵键盘翻转扫描
  277          {
- 278   1              uint keyvalue=0;
- 279   1              uchar temp1,temp2,keycode;
+ 278   1        uint keyvalue=0;
+ 279   1        uchar temp1,temp2,keycode;
  280   1      
- 281   1              KeyIO=0xf0;             //行置0列置1
- 282   1              temp1=KeyIO&0xf0;
- 283   1              if((temp1&0xf0)==0xf0) return(0);  //若无键按下返回0
- 284   1              KeyIO=0x0f;
- 285   1              temp2=KeyIO&0x0f;                                          //若有键按下，行置1列置0
- 286   1              keycode=~(temp1|temp2);                    //获得键盘码
- 287   1              switch(keycode)                                    //根据键盘码返回键值
- 288   1              {
- 289   2                      case 0x11:return(11);break;
- 290   2                      case 0x21:return(12);break;
- 291   2                      case 0x41:return(13);break;
- 292   2                      case 0x81:return(14);break;
- 293   2                      case 0x12:return(21);break;
- 294   2                      case 0x22:return(22);break;
- 295   2                      case 0x42:return(23);break;
- 296   2                      case 0x82:return(24);break;
- 297   2                      case 0x14:return(31);break;
- 298   2                      case 0x24:return(32);break;
- 299   2                      case 0x44:return(33);break;
- 300   2                      case 0x84:return(34);break;
- 301   2                      case 0x18:return(41);break;
- 302   2                      case 0x28:return(42);break;
- 303   2                      case 0x48:return(43);break;
-C51 COMPILER V9.52.0.0   MAIN                                                              06/02/2020 19:36:07 PAGE 6   
+ 281   1        KeyIO=0xf0;   //行置0列置1
+ 282   1        temp1=KeyIO&0xf0;
+ 283   1        if((temp1&0xf0)==0xf0) return(0);  //若无键按下返回0
+ 284   1        KeyIO=0x0f;
+ 285   1        temp2=KeyIO&0x0f;            //若有键按下，行置1列置0
+ 286   1        keycode=~(temp1|temp2);        //获得键盘码
+ 287   1        switch(keycode)            //根据键盘码返回键值
+ 288   1        {
+ 289   2          case 0x11:return(11);break;
+ 290   2          case 0x21:return(12);break;
+ 291   2          case 0x41:return(13);break;
+ 292   2          case 0x81:return(14);break;
+ 293   2          case 0x12:return(21);break;
+ 294   2          case 0x22:return(22);break;
+ 295   2          case 0x42:return(23);break;
+ 296   2          case 0x82:return(24);break;
+ 297   2          case 0x14:return(31);break;
+ 298   2          case 0x24:return(32);break;
+ 299   2          case 0x44:return(33);break;
+ 300   2          case 0x84:return(34);break;
+ 301   2          case 0x18:return(41);break;
+ 302   2          case 0x28:return(42);break;
+ 303   2          case 0x48:return(43);break;
+C51 COMPILER V9.60.0.0   MAIN                                                              08/18/2020 15:31:27 PAGE 6   
 
- 304   2                      case 0x88:return(44);break;
- 305   2                      default:  return(0);break;
- 306   2              }
- 307   1              return(0);
+ 304   2          case 0x88:return(44);break;
+ 305   2          default:  return(0);break;
+ 306   2        }
+ 307   1        return(0);
  308   1      }
- 309                   
+ 309             
  310          /****************延迟毫秒数************************/
  311          void Delay_xMs(unsigned int x)
  312          {
@@ -336,10 +336,11 @@ line level    source
  317   2          }
  318   1      }
  319          
+*** WARNING C294 IN LINE 307 OF main.c: unreachable code
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1304    ----
+   CODE SIZE        =   1294    ----
    CONSTANT SIZE    =    616    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -349,4 +350,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
