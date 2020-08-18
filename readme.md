@@ -1,0 +1,3 @@
+- Device: STC15F2K60S2
+- Stringless Piano for Summer Class Electronic System Design
+- Based on a demo given by teacher
