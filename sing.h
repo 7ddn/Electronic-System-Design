@@ -8,13 +8,27 @@
 //void playnote(int note, char range);
 uchar GetCycle(char , char);
 uchar NOTE[] ={
-    0x30 ,//mid C
-    0x2b ,//mid D
-    0x26 ,//mid E
-    0x24 ,//mid F
-    0x20 ,//mid G
-    0x1c ,//mid A
-    0x10 ,//mid B
+    0x60 ,//C3
+    0x56 ,//D3
+    0x4C ,//E3
+    0x48 ,//F3
+    0X40 ,//G3
+    0X38 ,//A3
+    0x32 ,//B3
+    0x30 ,//C4
+    0x2b ,//D4
+    0x26 ,//E4
+    0x24 ,//F4
+    0x20 ,//G4
+    0x1C ,//A4
+    0x19 ,//B4
+    0x18 ,//C5
+    0x15 ,//D5
+    0x13 ,//E5
+    0x12 ,//F5
+    0x10 ,//G5
+    0x0E ,//A5
+    0x0D ,//B5
 };
 
 

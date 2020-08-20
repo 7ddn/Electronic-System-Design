@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2020 14:51:39 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/20/2020 15:42:18 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -20,258 +20,286 @@ line level    source
   11          uchar port_status;
   12          uchar key;
   13          unsigned char Count;
-  14          double range = 1;
-  15          
-  16          void Time0_Int() interrupt 1
-  17          {
-  18   1         TH0 = 0xDC;
-  19   1         TL0 = 0x00;
-  20   1         Count++;   
-  21   1      }
-  22          
-  23          void Playnote(uchar flag, int i){
-  24   1        OPT_CHECK = 0xFF;
-  25   1        while (OPT_CHECK&flag){
-  26   2          bee_Speak = ~bee_Speak;
-  27   2          Delay_xMs(NOTE[i-1]);
-  28   2          OPT_CHECK = 0xFF;
-  29   2        }
-  30   1      }
-  31          
-  32          void main()
-  33          {
-  34   1        P5M1=0x00;
-  35   1        P5M0=0x30;
-  36   1        
-  37   1        P4M1=0xC0;
-  38   1        P4M0=0x00;
-  39   1        
-  40   1        P3M1=0x00;
-  41   1        P3M0=0x00;
+  14          double pitch = 7;
+  15          char pitchFlag = 1;
+  16          
+  17          void Time0_Int() interrupt 1
+  18          {
+  19   1         TH0 = 0xDC;
+  20   1         TL0 = 0x00;
+  21   1         Count++;   
+  22   1      }
+  23          
+  24          void Playnote(uchar flag, int i){
+  25   1        OPT_CHECK = 0xFF;
+  26   1        while (OPT_CHECK&flag){
+  27   2          bee_Speak = ~bee_Speak;
+  28   2          Delay_xMs(NOTE[i-1]);
+  29   2          OPT_CHECK = 0xFF;
+  30   2        }
+  31   1        pitchFlag = 1;
+  32   1      }
+  33          
+  34          void PlayMusic();
+  35          void ManualPlay();
+  36          void MenuDisplay(int);
+  37          
+  38          void main()
+  39          {
+  40   1        P5M1=0x00;
+  41   1        P5M0=0x30;
   42   1        
-  43   1        Ini_Lcd();//液晶初始化子程序
-  44   1        Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
-  45   1        Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
-  46   1        Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-  47   1        Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
-  48   1        while(1)
-  49   1        {
-  50   2          
-  51   2          if((ctrl_port_check()&0xF0)==0xF0)
-  52   2          {   
-  53   3            s1_s2_check();
-  54   3            P4M1=0x00;
-  55   3            P4M0=0x00;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2020 14:51:39 PAGE 2   
+  43   1        P4M1=0xC0;
+  44   1        P4M0=0x00;
+  45   1        
+  46   1        P3M1=0x00;
+  47   1        P3M0=0x00;
+  48   1        
+  49   1        Ini_Lcd();//液晶初始化子程序
+  50   1        Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
+  51   1        Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
+  52   1        Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
+  53   1        Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
+  54   1        while(1)
+  55   1        {
+C51 COMPILER V9.60.0.0   MAIN                                                              08/20/2020 15:42:18 PAGE 2   
 
-  56   3            Ini_Lcd();//液晶初始化子程序
-  57   3            Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
-  58   3            Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
-  59   3            Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-  60   3            Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
-  61   3            Delay_xMs(2500);    
-  62   3          }
-  63   2          
-  64   2          if(!(ctrl_port_check()&0x80))
-  65   2          { 
-  66   3            KeyIO=0xF0;
-  67   3            Ini_Lcd();//液晶初始化子程序
-  68   3            Disp(1,0,16,"系统进行按键检测");//显示数据到LCD12864子程序
-  69   3            Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-  70   3            Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
-  71   3            while(!(ctrl_port_check()&0x80))
-  72   3            {
-  73   4              s1_s2_check();        
-  74   4              if((P1&0xf0)!=0xf0) //如果有键按下
-  75   4                  {
-  76   5                      Delay_xMs(100);   //延时去抖动
-  77   5                      if((KeyIO&0xf0)!=0xf0)   //再判断
-  78   5                      {
-  79   6                  key=scankey();
-  80   6                  switch(key)
-  81   6                  {
-  82   7                    case 11:Disp(2,1,12,"KEY_VALUE:01");  break;//显示数据到LCD12864子程序
-  83   7                    case 12:Disp(2,1,12,"KEY_VALUE:02");  break;//显示数据到LCD12864子程序
-  84   7                    case 13:Disp(2,1,12,"KEY_VALUE:03");  break;//显示数据到LCD12864子程序
-  85   7                    case 14:Disp(2,1,12,"KEY_VALUE:04");  break;//显示数据到LCD12864子程序
-  86   7                    case 21:Disp(2,1,12,"KEY_VALUE:05");  break;//显示数据到LCD12864子程序
-  87   7                    case 22:Disp(2,1,12,"KEY_VALUE:06");  break;//显示数据到LCD12864子程序
-  88   7                    case 23:Disp(2,1,12,"KEY_VALUE:07");  break;//显示数据到LCD12864子程序
-  89   7                    case 24:Disp(2,1,12,"KEY_VALUE:08");  break;//显示数据到LCD12864子程序
-  90   7                    case 31:Disp(2,1,12,"KEY_VALUE:09");  break;//显示数据到LCD12864子程序
-  91   7                    case 32:Disp(2,1,12,"KEY_VALUE:10");  break;//显示数据到LCD12864子程序
-  92   7                    case 33:Disp(2,1,12,"KEY_VALUE:11");  break;//显示数据到LCD12864子程序
-  93   7                    case 34:Disp(2,1,12,"KEY_VALUE:12");  break;//显示数据到LCD12864子程序
-  94   7                    case 41:Disp(2,1,12,"KEY_VALUE:13");  break;//显示数据到LCD12864子程序
-  95   7                    case 42:Disp(2,1,12,"KEY_VALUE:14");  break;//显示数据到LCD12864子程序
-  96   7                    case 43:Disp(2,1,12,"KEY_VALUE:15");  break;//显示数据到LCD12864子程序
-  97   7                    case 44:Disp(2,1,12,"KEY_VALUE:16");  break;//显示数据到LCD12864子程序
-  98   7                  }
-  99   6                }   
- 100   5              }
- 101   4            }
- 102   3          }
- 103   2          else if(!(ctrl_port_check()&0x40))
- 104   2          { 
- 105   3            s1_s2_check();
- 106   3            Ini_Lcd();//液晶初始化子程序
- 107   3            Disp(1,0,16,"系统进行音乐播放");//显示数据到LCD12864子程序
- 108   3            Disp(2,1,13,"Playing Music");//显示数据到LCD12864子程序  
- 109   3            Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
- 110   3            Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序    
- 111   3            Time0_Init();
- 112   3            Play_Song(0);      
- 113   3          } 
- 114   2          else if(!(ctrl_port_check()&0x20))
- 115   2          { 
- 116   3            s1_s2_check();
- 117   3            Ini_Lcd();
-C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2020 14:51:39 PAGE 3   
+  56   2          s1_s2_check();
+  57   2          P4M1=0x00;
+  58   2          P4M0=0x00;
+  59   2          Ini_Lcd();//液晶初始化子程序
+  60   2          MenuDisplay(1);
+  61   2          KeyIO = 0xF0;
+  62   2          while((ctrl_port_check()&0xF0)==0xF0){
+  63   3            s1_s2_check();
+  64   3            if ((P1&0xF0)!=0xF0){
+  65   4              Delay_xMs(100);
+  66   4              if((KeyIO&0xF0)!=0xF0){
+  67   5                key = scankey();
+  68   5                switch (key)
+  69   5                {
+  70   6                case 11:
+  71   6                  PlayMusic();
+  72   6                  MenuDisplay(1);
+  73   6                  break;
+  74   6                case 12:
+  75   6                  ManualPlay();
+  76   6                  MenuDisplay(1);
+  77   6                  break;
+  78   6                default:
+  79   6                  break;
+  80   6                }
+  81   5              }
+  82   4            }
+  83   3          }
+  84   2          Delay_xMs(2500);    
+  85   2        }
+  86   1      }
+  87          
+  88          /*******************定时器初始化********************/
+  89          void Time0_Init()
+  90          {
+  91   1       TMOD = 0x01;
+  92   1       IE   = 0x82;
+  93   1       TH0  = 0xDC;
+  94   1       TL0  = 0x00;  //11.0592MZ
+  95   1      }
+  96          /****************播放音乐*************************/
+  97          void s1_s2_check(void)
+  98          {
+  99   1        if(P4&0x40) 
+ 100   1          DLED_1 =1;
+ 101   1        else  
+ 102   1          DLED_1 =0;
+ 103   1        if((P4&0x80)) 
+ 104   1          DLED_2 =1;
+ 105   1        else  
+ 106   1          DLED_2 =0;
+ 107   1      }
+ 108          
+ 109          /****************播放音乐*************************/
+ 110          void Play_Song(unsigned char i)
+ 111          {
+ 112   1         unsigned char Temp1,Temp2;
+ 113   1         unsigned int Addr;
+ 114   1         Count = 0;      
+ 115   1         Addr = i * 217;  
+ 116   1         while(1)
+ 117   1         {
+C51 COMPILER V9.60.0.0   MAIN                                                              08/20/2020 15:42:18 PAGE 3   
 
- 118   3            Disp(1,4,8,"演奏模式");//显示数据到LCD12864子程序
- 119   3            while(!(ctrl_port_check()&0x20)) {
- 120   4              OPT_CHECK = 0xFF;
- 121   4              if (OPT_CHECK&0x01) Playnote(0x01, 7);
- 122   4               else if (OPT_CHECK&0x02) Playnote(0x02, 6);
- 123   4               else if (OPT_CHECK&0x04) Playnote(0x04, 5);
- 124   4               else if (OPT_CHECK&0x08) Playnote(0x08, 4);
- 125   4               else if (OPT_CHECK&0x10) Playnote(0x10, 3);
- 126   4               else if (OPT_CHECK&0x20) Playnote(0x20, 2);
- 127   4               else if (OPT_CHECK&0x40) Playnote(0x40, 1);
- 128   4              
- 129   4            }
- 130   3          } 
- 131   2      
- 132   2        }
- 133   1      }
- 134          
- 135          /*******************定时器初始化********************/
- 136          void Time0_Init()
- 137          {
- 138   1       TMOD = 0x01;
- 139   1       IE   = 0x82;
- 140   1       TH0  = 0xDC;
- 141   1       TL0  = 0x00;  //11.0592MZ
- 142   1      }
- 143          /****************播放音乐*************************/
- 144          void s1_s2_check(void)
- 145          {
- 146   1        if(P4&0x40) 
- 147   1          DLED_1 =1;
- 148   1        else  
- 149   1          DLED_1 =0;
- 150   1        if((P4&0x80)) 
- 151   1          DLED_2 =1;
- 152   1        else  
- 153   1          DLED_2 =0;
- 154   1      }
- 155          
- 156          /****************播放音乐*************************/
- 157          void Play_Song(unsigned char i)
- 158          {
- 159   1         unsigned char Temp1,Temp2;
- 160   1         unsigned int Addr;
- 161   1         Count = 0;      
- 162   1         Addr = i * 217;  
- 163   1         while(!(ctrl_port_check()&0x40))
- 164   1         {
- 165   2             Temp1 = SONG[Addr++];
- 166   2             if ( Temp1 == 0xFF )         
- 167   2             {
- 168   3                TR0 = 0;                 
- 169   3                Delay_xMs(100);
- 170   3             }
- 171   2             else if ( Temp1 == 0x00 )   
- 172   2             {
- 173   3                return;
- 174   3             }
- 175   2             else
- 176   2             {
- 177   3                Temp2 = SONG[Addr++];
- 178   3                TR0 = 1;
- 179   3              while(!(ctrl_port_check()&0x40))
-C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2020 14:51:39 PAGE 4   
+ 118   2          
+ 119   2             Temp1 = SONG[Addr++];
+ 120   2             if ( Temp1 == 0xFF )         
+ 121   2             {
+ 122   3                TR0 = 0;                 
+ 123   3                Delay_xMs(100);
+ 124   3             }
+ 125   2             else if ( Temp1 == 0x00 )   
+ 126   2             {
+ 127   3                return;
+ 128   3             }
+ 129   2             else
+ 130   2             {
+ 131   3                Temp2 = SONG[Addr++];
+ 132   3                TR0 = 1;
+ 133   3              while(1)
+ 134   3              {
+ 135   4                 bee_Speak = ~bee_Speak;
+ 136   4                 Delay_xMs(Temp1);
+ 137   4                 if ( Temp2 == Count )
+ 138   4                 {
+ 139   5                    Count = 0;
+ 140   5                    break;
+ 141   5                 }
+ 142   4               KeyIO=0xF0;
+ 143   4              if ((P1&0xf0)!=0xf0) return;
+ 144   4              }
+ 145   3             }
+ 146   2        }
+ 147   1        bee_Speak = 0;  //关闭蜂鸣器
+ 148   1      }
+ 149          
+ 150          
+ 151          /*****************检测控制端口的状态*****************/
+ 152          uchar ctrl_port_check(void)
+ 153          {
+ 154   1          SW_CTRL = 0xFF;
+ 155   1          return  SW_CTRL&0xF0;
+ 156   1      }
+ 157          
+ 158          uchar scankey(void)//矩阵键盘翻转扫描
+ 159          {
+ 160   1        uint keyvalue=0;
+ 161   1        uchar temp1,temp2,keycode;
+ 162   1      
+ 163   1        KeyIO=0xf0;   //行置0列置1
+ 164   1        temp1=KeyIO&0xf0;
+ 165   1        if((temp1&0xf0)==0xf0) return(0);  //若无键按下返回0
+ 166   1        KeyIO=0x0f;
+ 167   1        temp2=KeyIO&0x0f;            //若有键按下，行置1列置0
+ 168   1        keycode=~(temp1|temp2);        //获得键盘码
+ 169   1        switch(keycode)            //根据键盘码返回键值
+ 170   1        {
+ 171   2          case 0x11:return(11);break;
+ 172   2          case 0x21:return(12);break;
+ 173   2          case 0x41:return(13);break;
+ 174   2          case 0x81:return(14);break;
+ 175   2          case 0x12:return(21);break;
+ 176   2          case 0x22:return(22);break;
+ 177   2          case 0x42:return(23);break;
+ 178   2          case 0x82:return(24);break;
+ 179   2          case 0x14:return(31);break;
+C51 COMPILER V9.60.0.0   MAIN                                                              08/20/2020 15:42:18 PAGE 4   
 
- 180   3              {
- 181   4                 bee_Speak = ~bee_Speak;
- 182   4                 Delay_xMs(Temp1);
- 183   4                 if ( Temp2 == Count )
- 184   4                 {
- 185   5                    Count = 0;
- 186   5                    break;
- 187   5                 }
- 188   4              }
- 189   3             }
- 190   2        }
- 191   1        bee_Speak = 0;  //关闭蜂鸣器
- 192   1      }
- 193          
- 194          
- 195          /*****************检测控制端口的状态*****************/
- 196          uchar ctrl_port_check(void)
- 197          {
- 198   1          SW_CTRL = 0xFF;
- 199   1          return  SW_CTRL&0xF0;
+ 180   2          case 0x24:return(32);break;
+ 181   2          case 0x44:return(33);break;
+ 182   2          case 0x84:return(34);break;
+ 183   2          case 0x18:return(41);break;
+ 184   2          case 0x28:return(42);break;
+ 185   2          case 0x48:return(43);break;
+ 186   2          case 0x88:return(44);break;
+ 187   2          default:  return(0);break;
+ 188   2        }
+ 189   1        return(0);
+ 190   1      }
+ 191             
+ 192          /****************延迟毫秒数************************/
+ 193          void Delay_xMs(unsigned int x)
+ 194          {
+ 195   1          unsigned int i,j;
+ 196   1          for( i = 0;i < x;i++ )
+ 197   1          {
+ 198   2              for( j = 0;j<2;j++ );
+ 199   2          }
  200   1      }
  201          
- 202          uchar scankey(void)//矩阵键盘翻转扫描
- 203          {
- 204   1        uint keyvalue=0;
- 205   1        uchar temp1,temp2,keycode;
- 206   1      
- 207   1        KeyIO=0xf0;   //行置0列置1
- 208   1        temp1=KeyIO&0xf0;
- 209   1        if((temp1&0xf0)==0xf0) return(0);  //若无键按下返回0
- 210   1        KeyIO=0x0f;
- 211   1        temp2=KeyIO&0x0f;            //若有键按下，行置1列置0
- 212   1        keycode=~(temp1|temp2);        //获得键盘码
- 213   1        switch(keycode)            //根据键盘码返回键值
- 214   1        {
- 215   2          case 0x11:return(11);break;
- 216   2          case 0x21:return(12);break;
- 217   2          case 0x41:return(13);break;
- 218   2          case 0x81:return(14);break;
- 219   2          case 0x12:return(21);break;
- 220   2          case 0x22:return(22);break;
- 221   2          case 0x42:return(23);break;
- 222   2          case 0x82:return(24);break;
- 223   2          case 0x14:return(31);break;
- 224   2          case 0x24:return(32);break;
- 225   2          case 0x44:return(33);break;
- 226   2          case 0x84:return(34);break;
- 227   2          case 0x18:return(41);break;
- 228   2          case 0x28:return(42);break;
- 229   2          case 0x48:return(43);break;
- 230   2          case 0x88:return(44);break;
- 231   2          default:  return(0);break;
- 232   2        }
- 233   1        return(0);
- 234   1      }
- 235             
- 236          /****************延迟毫秒数************************/
- 237          void Delay_xMs(unsigned int x)
- 238          {
- 239   1          unsigned int i,j;
- 240   1          for( i = 0;i < x;i++ )
- 241   1          {
-C51 COMPILER V9.60.0.0   MAIN                                                              08/19/2020 14:51:39 PAGE 5   
+ 202          // 菜单功能函数
+ 203          
+ 204          void MenuDisplay(int page){
+ 205   1        Ini_Lcd();
+ 206   1        switch (page)
+ 207   1        {
+ 208   2        case 1:
+ 209   2          Disp(1,3,4,"菜单");
+ 210   2          Disp(2,0,10,"1.播放音乐");
+ 211   2          Disp(3,0,10,"2.弹奏模式");
+ 212   2          Disp(4,0,8,"3.下一页");
+ 213   2          break;
+ 214   2        default:
+ 215   2          break;
+ 216   2        }
+ 217   1      
+ 218   1      }
+ 219          
+ 220          void PlayMusic(){
+ 221   1        Ini_Lcd();
+ 222   1        Disp(1,2,8,"音乐播放");
+ 223   1        Disp(4,1,12,"按任意键返回");
+ 224   1        Time0_Init();
+ 225   1        Play_Song(0);
+ 226   1      }
+ 227          
+ 228          void ManualPlay(){
+ 229   1        s1_s2_check();
+ 230   1        Ini_Lcd();
+ 231   1        Disp(1,2,8,"演奏模式");
+ 232   1        if (pitch!=0) Disp(2,0,10,"2.降低音高");
+ 233   1        if (pitch!=14) Disp(3,0,10,"3.提高音高");
+ 234   1        Disp(4,1,12,"按任意键返回");
+ 235   1        while(1) {
+ 236   2          KeyIO=0xF0;
+ 237   2          if ((P1&0xf0)!=0xf0) {
+ 238   3            Delay_xMs(100);
+ 239   3            if((KeyIO&0xF0)!=0xF0){
+ 240   4              key = scankey();
+ 241   4              switch (key){
+C51 COMPILER V9.60.0.0   MAIN                                                              08/20/2020 15:42:18 PAGE 5   
 
- 242   2              for( j = 0;j<2;j++ );
- 243   2          }
- 244   1      }
- 245          
-*** WARNING C294 IN LINE 233 OF main.c: unreachable code
+ 242   5                case 12:
+ 243   5                  if (!pitchFlag) break;
+ 244   5                  if (pitch>0) pitch-=7;
+ 245   5                  if (pitch==0) Disp(2,0,16,"音高已经是最低了");
+ 246   5                  Disp(3,0,10,"3.提高音高");
+ 247   5                  pitchFlag = 0;
+ 248   5                  break;
+ 249   5                case 13:
+ 250   5                  if (!pitchFlag) break;
+ 251   5                  if (pitch<14) pitch+=7;
+ 252   5                  if (pitch==14) Disp(3,0,16,"音高已经是最高了");
+ 253   5                  Disp(2,0,10,"2.降低音高");
+ 254   5                  pitchFlag = 0;
+ 255   5                  break;
+ 256   5                default:
+ 257   5                  return;
+ 258   5                  break;
+ 259   5              }
+ 260   4            }
+ 261   3            Delay_xMs(100);
+ 262   3          }
+ 263   2          OPT_CHECK = 0xFF;
+ 264   2          if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch);
+ 265   2           else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch);
+ 266   2           else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch);
+ 267   2           else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch);
+ 268   2           else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch);
+ 269   2           else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch);
+ 270   2           else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch);  
+ 271   2        }
+ 272   1      }
+*** WARNING C294 IN LINE 147 OF main.c: unreachable code
+*** WARNING C294 IN LINE 189 OF main.c: unreachable code
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1253    ----
-   CONSTANT SIZE    =    505    ----
+   CODE SIZE        =   1320    ----
+   CONSTANT SIZE    =    363    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     14       9
+   DATA SIZE        =     29      11
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

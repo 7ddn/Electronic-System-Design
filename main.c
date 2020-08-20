@@ -11,7 +11,8 @@
 uchar port_status;
 uchar key;
 unsigned char Count;
-double range = 1;
+double pitch = 7;
+char pitchFlag = 1;
 
 void Time0_Int() interrupt 1
 {
@@ -27,7 +28,12 @@ void Playnote(uchar flag, int i){
 		Delay_xMs(NOTE[i-1]);
 		OPT_CHECK = 0xFF;
 	}
+	pitchFlag = 1;
 }
+
+void PlayMusic();
+void ManualPlay();
+void MenuDisplay(int);
 
 void main()
 {
@@ -47,88 +53,35 @@ void main()
 	Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
 	while(1)
 	{
-		
-		if((ctrl_port_check()&0xF0)==0xF0)
-		{  	
+		s1_s2_check();
+		P4M1=0x00;
+		P4M0=0x00;
+		Ini_Lcd();//液晶初始化子程序
+		MenuDisplay(1);
+		KeyIO = 0xF0;
+		while((ctrl_port_check()&0xF0)==0xF0){
 			s1_s2_check();
-			P4M1=0x00;
-			P4M0=0x00;
-			Ini_Lcd();//液晶初始化子程序
-			Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序			
-			Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
-			Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-			Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序
-			Delay_xMs(2500);		
-		}
-		
-		if(!(ctrl_port_check()&0x80))
-		{ 
-			KeyIO=0xF0;
-			Ini_Lcd();//液晶初始化子程序
-			Disp(1,0,16,"系统进行按键检测");//显示数据到LCD12864子程序
-			Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-			Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序			
-			while(!(ctrl_port_check()&0x80))
-			{
-				s1_s2_check();				
-				if((P1&0xf0)!=0xf0) //如果有键按下
-		        {
-		            Delay_xMs(100);   //延时去抖动
-		            if((KeyIO&0xf0)!=0xf0)   //再判断
-		            {
-						key=scankey();
-						switch(key)
-						{
-							case 11:Disp(2,1,12,"KEY_VALUE:01");	break;//显示数据到LCD12864子程序
-							case 12:Disp(2,1,12,"KEY_VALUE:02");	break;//显示数据到LCD12864子程序
-							case 13:Disp(2,1,12,"KEY_VALUE:03");	break;//显示数据到LCD12864子程序
-							case 14:Disp(2,1,12,"KEY_VALUE:04");	break;//显示数据到LCD12864子程序
-							case 21:Disp(2,1,12,"KEY_VALUE:05");	break;//显示数据到LCD12864子程序
-							case 22:Disp(2,1,12,"KEY_VALUE:06");	break;//显示数据到LCD12864子程序
-							case 23:Disp(2,1,12,"KEY_VALUE:07");	break;//显示数据到LCD12864子程序
-							case 24:Disp(2,1,12,"KEY_VALUE:08");	break;//显示数据到LCD12864子程序
-							case 31:Disp(2,1,12,"KEY_VALUE:09");	break;//显示数据到LCD12864子程序
-							case 32:Disp(2,1,12,"KEY_VALUE:10");	break;//显示数据到LCD12864子程序
-							case 33:Disp(2,1,12,"KEY_VALUE:11");	break;//显示数据到LCD12864子程序
-							case 34:Disp(2,1,12,"KEY_VALUE:12");	break;//显示数据到LCD12864子程序
-							case 41:Disp(2,1,12,"KEY_VALUE:13");	break;//显示数据到LCD12864子程序
-							case 42:Disp(2,1,12,"KEY_VALUE:14");	break;//显示数据到LCD12864子程序
-							case 43:Disp(2,1,12,"KEY_VALUE:15");	break;//显示数据到LCD12864子程序
-							case 44:Disp(2,1,12,"KEY_VALUE:16");	break;//显示数据到LCD12864子程序
-						}
-					}   
+			if ((P1&0xF0)!=0xF0){
+				Delay_xMs(100);
+				if((KeyIO&0xF0)!=0xF0){
+					key = scankey();
+					switch (key)
+					{
+					case 11:
+						PlayMusic();
+						MenuDisplay(1);
+						break;
+					case 12:
+						ManualPlay();
+						MenuDisplay(1);
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		}
-		else if(!(ctrl_port_check()&0x40))
-		{ 
-			s1_s2_check();
-			Ini_Lcd();//液晶初始化子程序
-			Disp(1,0,16,"系统进行音乐播放");//显示数据到LCD12864子程序
-			Disp(2,1,13,"Playing Music");//显示数据到LCD12864子程序  
-			Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
-			Disp(4,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序		
-			Time0_Init();
-			Play_Song(0);			 
-		} 
-		else if(!(ctrl_port_check()&0x20))
-		{ 
-			s1_s2_check();
-			Ini_Lcd();
-			Disp(1,4,8,"演奏模式");//显示数据到LCD12864子程序
-			while(!(ctrl_port_check()&0x20)) {
-			 	OPT_CHECK = 0xFF;
-			 	if (OPT_CHECK&0x01) Playnote(0x01, 7);
-				 else if (OPT_CHECK&0x02) Playnote(0x02, 6);
-				 else if (OPT_CHECK&0x04) Playnote(0x04, 5);
-				 else if (OPT_CHECK&0x08) Playnote(0x08, 4);
-				 else if (OPT_CHECK&0x10) Playnote(0x10, 3);
-				 else if (OPT_CHECK&0x20) Playnote(0x20, 2);
-				 else if (OPT_CHECK&0x40) Playnote(0x40, 1);
-			 	
-			}
-		} 
-
+		Delay_xMs(2500);		
 	}
 }
 
@@ -160,8 +113,9 @@ void Play_Song(unsigned char i)
 	 unsigned int Addr;
 	 Count = 0;      
 	 Addr = i * 217;  
-	 while(!(ctrl_port_check()&0x40))
+	 while(1)
 	 {
+		
 	  	 Temp1 = SONG[Addr++];
 	     if ( Temp1 == 0xFF )         
 	     {
@@ -176,7 +130,7 @@ void Play_Song(unsigned char i)
 	     {
 		      Temp2 = SONG[Addr++];
 		      TR0 = 1;
-			  while(!(ctrl_port_check()&0x40))
+			  while(1)
 			  {
 			     bee_Speak = ~bee_Speak;
 			     Delay_xMs(Temp1);
@@ -185,6 +139,8 @@ void Play_Song(unsigned char i)
 			        Count = 0;
 			        break;
 			     }
+				 KeyIO=0xF0;
+				if ((P1&0xf0)!=0xf0) return;
 			  }
 	     }
 	}
@@ -243,3 +199,74 @@ void Delay_xMs(unsigned int x)
     }
 }
 
+// 菜单功能函数
+
+void MenuDisplay(int page){
+	Ini_Lcd();
+	switch (page)
+	{
+	case 1:
+		Disp(1,3,4,"菜单");
+		Disp(2,0,10,"1.播放音乐");
+		Disp(3,0,10,"2.弹奏模式");
+		Disp(4,0,8,"3.下一页");
+		break;
+	default:
+		break;
+	}
+
+}
+
+void PlayMusic(){
+	Ini_Lcd();
+	Disp(1,2,8,"音乐播放");
+	Disp(4,1,12,"按任意键返回");
+	Time0_Init();
+	Play_Song(0);
+}
+
+void ManualPlay(){
+	s1_s2_check();
+	Ini_Lcd();
+	Disp(1,2,8,"演奏模式");
+	if (pitch!=0) Disp(2,0,10,"2.降低音高");
+	if (pitch!=14) Disp(3,0,10,"3.提高音高");
+	Disp(4,1,12,"按任意键返回");
+	while(1) {
+		KeyIO=0xF0;
+		if ((P1&0xf0)!=0xf0) {
+			Delay_xMs(100);
+			if((KeyIO&0xF0)!=0xF0){
+				key = scankey();
+				switch (key){
+					case 12:
+						if (!pitchFlag) break;
+						if (pitch>0) pitch-=7;
+						if (pitch==0) Disp(2,0,16,"音高已经是最低了");
+						Disp(3,0,10,"3.提高音高");
+						pitchFlag = 0;
+						break;
+					case 13:
+						if (!pitchFlag) break;
+						if (pitch<14) pitch+=7;
+						if (pitch==14) Disp(3,0,16,"音高已经是最高了");
+						Disp(2,0,10,"2.降低音高");
+						pitchFlag = 0;
+						break;
+					default:
+						return;
+						break;
+				}
+			}
+			Delay_xMs(100);
+		}
+	 	OPT_CHECK = 0xFF;
+	 	if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch);
+		 else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch);
+		 else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch);
+		 else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch);
+		 else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch);
+		 else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch);
+		 else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch);	
+	}
+}
