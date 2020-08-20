@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2020 19:16:47 PAGE 1   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/19/2020 14:41:28 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DISPLAY
@@ -62,7 +62,7 @@ line level    source
   53          /******显示数组字符串(显示半宽字型16*8点阵)******/
   54          void ShowQQChar(uchar addr,uchar *english,uchar count)//DDRAM地址，数据首字节指针，数据长度
   55          {
-C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2020 19:16:47 PAGE 2   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/19/2020 14:41:28 PAGE 2   
 
   56   1        uchar i;
   57   1        Write_Cmd(addr); //设定DDRAM地址
@@ -126,7 +126,7 @@ line level    source
  115   2          i++;
  116   2          Write_Cmd(addr+i); //设定CGRAM地址
  117   2          Write_Data(0x00);
-C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2020 19:16:47 PAGE 3   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/19/2020 14:41:28 PAGE 3   
 
  118   2          Write_Data(0x00);
  119   2          i++;
@@ -190,7 +190,7 @@ line level    source
  177   2        }
  178   1        Write_Cmd(addr+4);Write_Data(0x00);Write_Data(0x00);
  179   1          Write_Cmd(addr+5);Write_Data(0x00);Write_Data(0x00);
-C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2020 19:16:47 PAGE 4   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/19/2020 14:41:28 PAGE 4   
 
  180   1        Write_Cmd(addr+6);Write_Data(0x18);Write_Data(0x00);
  181   1        Write_Cmd(addr+7);Write_Data(0x3c);Write_Data(0x00);
@@ -254,7 +254,7 @@ line level    source
  239          void Cursor(uchar x,uchar y)
  240          {
  241   1        Write_Cmd(0x34);
-C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2020 19:16:47 PAGE 5   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/19/2020 14:41:28 PAGE 5   
 
  242   1        Write_Cmd(y);
  243   1        Write_Cmd(x);
@@ -318,7 +318,7 @@ line level    source
  301          {
  302   1        uchar k;
  303   1        for(k=0;k<x;k++);
-C51 COMPILER V9.60.0.0   DISPLAY                                                           08/18/2020 19:16:47 PAGE 6   
+C51 COMPILER V9.60.0.0   DISPLAY                                                           08/19/2020 14:41:28 PAGE 6   
 
  304   1      }
 

@@ -4,7 +4,7 @@
             "name": "sys_pia",
             "includePath": [
                 "C:\\Keil_v5\\C51\\INC",
-                "f:\\课程\\2019-2020 春夏\\电子系统设计\\sys_tst"
+                "f:\\课程\\2019-2020 春夏\\电子系统设计\\sys_tst_modified"
             ],
             "defines": [
                 "__C51__",

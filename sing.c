@@ -15,7 +15,7 @@ uchar GetCycle(char note, char range){
     case 0x10: // E
         return floor(758/range);
 
-    case 0x08: // F
+    case 0x06: // F
         return floor(716/range);
     
     case 0x04: // G

@@ -1,6 +1,6 @@
 Build target 'sys_pia'
 compiling main.c...
-main.c(228): warning C294: unreachable code
+main.c(233): warning C294: unreachable code
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_SHOWQQCHAR?DISPLAY
@@ -32,16 +32,7 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_DELAYNUS?DISPLAY
 
-*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
-    SYMBOL:  _GETCYCLE
-    MODULE:  main.obj (MAIN)
-
-*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
-    SYMBOL:  _GETCYCLE
-    MODULE:  main.obj (MAIN)
-    ADDRESS: 028DH
-
-Program Size: data=63.0 xdata=0 code=3174
+Program Size: data=69.0 xdata=0 code=3358
 creating hex file from "sys_pia"...
-"sys_pia" - 0 Error(s), 13 Warning(s).
+"sys_pia" - 0 Error(s), 11 Warning(s).
 Build Time Elapsed:  00:00:01
