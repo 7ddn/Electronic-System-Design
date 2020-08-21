@@ -31,5 +31,7 @@ uchar NOTE[] ={
     0x0D ,//B5
 };
 
+void PlayMusic();
+void ManualPlay();
 
 #endif

@@ -9,19 +9,26 @@
 #include "sing.h"
 #include "string.h"
 #include <stdlib.h>
+#include "image.h"
+#include "bootup.h"
+#include "utils.h"
 
 uchar port_status;
 uchar key;
 unsigned char Count;
 double pitch = 7;
-char pitchFlag = 1;
 char currentPage = 1;
-int password[5] = {1,2,3,4,5};
+
 unsigned char RECORDED[250];
 unsigned char SheetMid[250];
 unsigned char SheetUp[250];
 unsigned char SheetDown[250];
 unsigned int Sheet2Note[250];
+
+
+int lastStartCount = -1;
+int lastEndCount = 0;
+uchar lastNote = 0x00;
 
 unsigned char code gImage_1[1030]={
 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFE,0x0F,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
@@ -92,44 +99,6 @@ unsigned char code gImage_1[1030]={
 
 
 
-int lastStartCount = -1;
-int lastEndCount = 0;
-uchar lastNote = 0x00;
-
-char *itoa(int val, char *buf, unsigned radix)
-{
-    char *p;             
-    char *firstdig;      
-    char temp;           
-    unsigned digval;     
-    p = buf;
-    if(val <0)
-    {
-        *p++ = '-';
-        val = (unsigned long)(-(long)val);
-    }
-    firstdig = p; 
-    do{
-        digval = (unsigned)(val % radix);
-        val /= radix;
-       
-        if  (digval > 9)
-            *p++ = (char)(digval - 10 + 'a'); 
-        else
-            *p++ = (char)(digval + '0');      
-    }while(val > 0);
-   
-    *p-- = '\0';         
-    do{
-        temp = *p;
-        *p = *firstdig;
-        *firstdig = temp;
-        --p;
-        ++firstdig;        
-    }while(firstdig < p);  
-    return buf;
-}
-
 void Time0_Int() interrupt 1
 {
 	 TH0 = 0xDC;
@@ -137,23 +106,7 @@ void Time0_Int() interrupt 1
 	 Count++;   
 }
 
-void Playnote(uchar flag, int i, int noteVisible){
-	char str[2] = "7";
-	OPT_CHECK = 0xFF;
-	if (noteVisible){
-		if (i%7!=0) itoa(i%7,str,10);
-		Disp(3,4,1,str);
-	}
-	while (OPT_CHECK&flag){
-		bee_Speak = ~bee_Speak;
-		Delay_xMs(NOTE[i-1]);
-		OPT_CHECK = 0xFF;
-	}
-	pitchFlag = 1;
-}
 
-void PlayMusic();
-void ManualPlay();
 void MenuDisplay(int);
 void Record();
 int Recordnote(uchar, int, int);
@@ -161,7 +114,7 @@ void PlayRecord();
 void GetSheet(int);
 void TestMode();
 void showNote(uchar, int, int);
-void musicLock();
+
 
 void main()
 {
@@ -417,92 +370,7 @@ void MenuDisplay(int page){
 
 }
 
-void PlayMusic(){
-	Ini_Lcd();
-	Disp(1,0,8,"1.ÐÂ±¦µº");
-	Disp(2,0,6,"2.°®ºÓ");
-	Disp(3,0,10,"3.×£ÄãÆ½°²");
-	Disp(4,0,10,"4.Ìì¿ÕÖ®³Ç");
 
-	Time0_Init();
-	KeyIO = 0xF0;
-	while(1){
-		s1_s2_check();
-		if ((P1&0xF0)!=0xF0){
-			Delay_xMs(100);
-			if((KeyIO&0xF0)!=0xF0){
-				key = scankey();
-				switch (key)
-				{
-				case 11:
-					Ini_Lcd();
-					Disp(1,0,8,"1.ÐÂ±¦µº");
-					Play_Song(0);
-					return;
-					break;
-				case 12:
-					Ini_Lcd();
-					Disp(1,0,6,"2.°®ºÓ");
-					Play_Song(1);
-					return;
-					break;
-				case 13:
-					Ini_Lcd();
-					Disp(1,0,10,"3.×£ÄãÆ½°²");
-					Play_Song(2);
-					return;
-					break;
-				case 14:
-					Ini_Lcd();
-					Disp(1,0,10,"4.Ìì¿ÕÖ®³Ç");
-					Play_Song(3);
-					return;
-					break;
-				default:
-					return;
-					break;
-				}
-			}
-			Delay_xMs(2500);
-		}
-	}
-}
-
-void ManualPlay(){
-	s1_s2_check();
-	Ini_Lcd();
-	Disp(1,2,8,"ÑÝ×àÄ£Ê½");
-	Disp(4,1,12,"°´ÈÎÒâ¼ü·µ»Ø");
-	while(1) {
-		KeyIO=0xF0;
-		if ((P1&0xf0)!=0xf0) {
-			Delay_xMs(100);
-			if((KeyIO&0xF0)!=0xF0){
-				key = scankey();
-				return;
-				break;
-			}
-			Delay_xMs(100);
-		}
-	 	OPT_CHECK = 0xFF;
-		s1_s2_check();
-		pitch = 7 + DLED_2*7 - DLED_1*7;
-		if (pitch == 14){
-			Disp(2,3,4,"¸ßÒô");
-		} else if (pitch == 7){
-			Disp(2,3,4,"ÖÐÒô");
-		} else if (pitch == 0){
-			Disp(2,3,4,"µÍÒô");
-		}
-	 	if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch, 1);
-		 else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch, 1);
-		 else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch, 1);
-		 else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch, 1);
-		 else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch, 1);
-		 else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch, 1);
-		 else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch, 1);	
-	}
-}
 
 // Â¼ÖÆ
 
@@ -946,103 +814,3 @@ void showNote(uchar note, int line1, int line2){
 	}
 }
 
-void musicLock(){
-	int nowPW = 0;
-	//char str[2];
-
-	while(nowPW < 5){
-		//itoa(nowPW, str, 10);
-		//Disp(4,0,1,str);
-		
-		if (nowPW == 0){
-			Ini_Lcd();
-			Disp(1,0,16,"ÇëÑÝ×àÒÔÊäÈëÃÜÂë");
-			Disp(2,0,9,"_ _ _ _ _");
-		}
-		OPT_CHECK = 0xFF;
-	 	if (OPT_CHECK&0x01) {
-				Playnote(0x01, 7, 0);
-				if (password[nowPW] == 7) {
-					Disp(2,nowPW,1,"7");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-			else if (OPT_CHECK&0x02) {
-				Playnote(0x02, 6, 0);
-				if (password[nowPW] == 6) {
-					Disp(2,nowPW,1,"6");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-			else if (OPT_CHECK&0x04) {
-				Playnote(0x04, 5, 0);
-				if (password[nowPW] == 5) {
-					Disp(2,nowPW,1,"5");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-			else if (OPT_CHECK&0x08) {
-				Playnote(0x08, 4, 0);
-				if (password[nowPW] == 4) {
-					Disp(2,nowPW,1,"4");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-			else if (OPT_CHECK&0x10) {
-				Playnote(0x10, 3, 0);
-				if (password[nowPW] == 3) {
-					Disp(2,nowPW,1,"3");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-			else if (OPT_CHECK&0x20) {
-				Playnote(0x20, 2, 0);
-				if (password[nowPW] == 2) {
-					Disp(2,nowPW,1,"2");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-			else if (OPT_CHECK&0x40) {
-				Playnote(0x40, 1, 0);
-				if (password[nowPW] == 1) {
-					Disp(2,nowPW,1,"1");
-					nowPW++;
-					Disp(3,2,8,"ÃÜÂëÎÞÎó");
-				}
-				else {
-					nowPW = 0;
-					Disp(3,2,8,"ÃÜÂë´íÎó");
-				}
-			}
-	}
-}
