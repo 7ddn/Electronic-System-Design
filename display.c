@@ -69,9 +69,9 @@ void Disp(uchar y,uchar x,uchar i,uchar *z)
 	uchar Address;    
 	//Y判断第几行,X判断第几列,0x80为液晶行初始地址    
 	if(y==1)  Address=0x80+x;
-	if(y==2)  Address=0x90+x;        
-	if(y==3)  Address=0x88+x;    
-	if(y==4)  Address=0x98+x;  
+	if(y==2)  Address=0x90+x;
+	if(y==3)  Address=0x88+x;
+	if(y==4)  Address=0x98+x;
 	Write_Cmd(Address);		//写入地址命令到LCD12864  
 	while(i)       			//写入显示数据的大小  
 	{    
