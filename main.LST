@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -25,757 +25,757 @@ line level    source
   16          double pitch = 7;
   17          char pitchFlag = 1;
   18          char currentPage = 1;
-  19          unsigned char RECORDED[250];
-  20          unsigned char SheetMid[250];
-  21          unsigned char SheetUp[250];
-  22          unsigned char SheetDown[250];
-  23          unsigned int Sheet2Note[250];
-  24          
+  19          int password[5] = {1,2,3,4,5};
+  20          unsigned char RECORDED[250];
+  21          unsigned char SheetMid[250];
+  22          unsigned char SheetUp[250];
+  23          unsigned char SheetDown[250];
+  24          unsigned int Sheet2Note[250];
   25          
   26          
-  27          int lastStartCount = -1;
-  28          int lastEndCount = 0;
-  29          uchar lastNote = 0x00;
-  30          
-  31          char *itoa(int val, char *buf, unsigned radix)
-  32          {
-  33   1          char *p;             
-  34   1          char *firstdig;      
-  35   1          char temp;           
-  36   1          unsigned digval;     
-  37   1          p = buf;
-  38   1          if(val <0)
-  39   1          {
-  40   2              *p++ = '-';
-  41   2              val = (unsigned long)(-(long)val);
-  42   2          }
-  43   1          firstdig = p; 
-  44   1          do{
-  45   2              digval = (unsigned)(val % radix);
-  46   2              val /= radix;
-  47   2             
-  48   2              if  (digval > 9)
-  49   2                  *p++ = (char)(digval - 10 + 'a'); 
-  50   2              else
-  51   2                  *p++ = (char)(digval + '0');      
-  52   2          }while(val > 0);
-  53   1         
-  54   1          *p-- = '\0';         
-  55   1          do{
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 2   
+  27          
+  28          int lastStartCount = -1;
+  29          int lastEndCount = 0;
+  30          uchar lastNote = 0x00;
+  31          
+  32          char *itoa(int val, char *buf, unsigned radix)
+  33          {
+  34   1          char *p;             
+  35   1          char *firstdig;      
+  36   1          char temp;           
+  37   1          unsigned digval;     
+  38   1          p = buf;
+  39   1          if(val <0)
+  40   1          {
+  41   2              *p++ = '-';
+  42   2              val = (unsigned long)(-(long)val);
+  43   2          }
+  44   1          firstdig = p; 
+  45   1          do{
+  46   2              digval = (unsigned)(val % radix);
+  47   2              val /= radix;
+  48   2             
+  49   2              if  (digval > 9)
+  50   2                  *p++ = (char)(digval - 10 + 'a'); 
+  51   2              else
+  52   2                  *p++ = (char)(digval + '0');      
+  53   2          }while(val > 0);
+  54   1         
+  55   1          *p-- = '\0';         
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 2   
 
-  56   2              temp = *p;
-  57   2              *p = *firstdig;
-  58   2              *firstdig = temp;
-  59   2              --p;
-  60   2              ++firstdig;        
-  61   2          }while(firstdig < p);  
-  62   1          return buf;
-  63   1      }
-  64          
-  65          void Time0_Int() interrupt 1
-  66          {
-  67   1         TH0 = 0xDC;
-  68   1         TL0 = 0x00;
-  69   1         Count++;   
-  70   1      }
-  71          
-  72          void Playnote(uchar flag, int i){
-  73   1        char str[2] = "7";
-  74   1        OPT_CHECK = 0xFF;
-  75   1        if (i%7!=0) itoa(i%7,str,10);
-  76   1        Disp(3,4,1,str);
-  77   1        while (OPT_CHECK&flag){
-  78   2          bee_Speak = ~bee_Speak;
-  79   2          Delay_xMs(NOTE[i-1]);
-  80   2          OPT_CHECK = 0xFF;
-  81   2        }
-  82   1        pitchFlag = 1;
-  83   1      }
-  84          
-  85          void PlayMusic();
-  86          void ManualPlay();
-  87          void MenuDisplay(int);
-  88          void Record();
-  89          int Recordnote(uchar, int, int);
-  90          void PlayRecord();
-  91          void GetSheet(int);
-  92          void TestMode();
-  93          void showNote(uchar, int, int);
-  94          
-  95          void main()
-  96          {
-  97   1        P5M1=0x00;
-  98   1        P5M0=0x30;
-  99   1        
- 100   1        P4M1=0xC0;
- 101   1        P4M0=0x00;
- 102   1        
- 103   1        P3M1=0x00;
- 104   1        P3M0=0x00;
- 105   1        
- 106   1        Ini_Lcd();//液晶初始化子程序
- 107   1        Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
- 108   1        Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
- 109   1        Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
- 110   1        Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
- 111   1        while(1)
- 112   1        {
- 113   2          s1_s2_check();
- 114   2          P4M1=0x00;
- 115   2          P4M0=0x00;
- 116   2          Ini_Lcd();//液晶初始化子程序
- 117   2          MenuDisplay(currentPage);
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 3   
+  56   1          do{
+  57   2              temp = *p;
+  58   2              *p = *firstdig;
+  59   2              *firstdig = temp;
+  60   2              --p;
+  61   2              ++firstdig;        
+  62   2          }while(firstdig < p);  
+  63   1          return buf;
+  64   1      }
+  65          
+  66          void Time0_Int() interrupt 1
+  67          {
+  68   1         TH0 = 0xDC;
+  69   1         TL0 = 0x00;
+  70   1         Count++;   
+  71   1      }
+  72          
+  73          void Playnote(uchar flag, int i, int noteVisible){
+  74   1        char str[2] = "7";
+  75   1        OPT_CHECK = 0xFF;
+  76   1        if (noteVisible){
+  77   2          if (i%7!=0) itoa(i%7,str,10);
+  78   2          Disp(3,4,1,str);
+  79   2        }
+  80   1        while (OPT_CHECK&flag){
+  81   2          bee_Speak = ~bee_Speak;
+  82   2          Delay_xMs(NOTE[i-1]);
+  83   2          OPT_CHECK = 0xFF;
+  84   2        }
+  85   1        pitchFlag = 1;
+  86   1      }
+  87          
+  88          void PlayMusic();
+  89          void ManualPlay();
+  90          void MenuDisplay(int);
+  91          void Record();
+  92          int Recordnote(uchar, int, int);
+  93          void PlayRecord();
+  94          void GetSheet(int);
+  95          void TestMode();
+  96          void showNote(uchar, int, int);
+  97          void musicLock();
+  98          
+  99          void main()
+ 100          {
+ 101   1        P5M1=0x00;
+ 102   1        P5M0=0x30;
+ 103   1        
+ 104   1        P4M1=0xC0;
+ 105   1        P4M0=0x00;
+ 106   1        
+ 107   1        P3M1=0x00;
+ 108   1        P3M0=0x00;
+ 109   1        
+ 110   1        Ini_Lcd();//液晶初始化子程序
+ 111   1        Disp(1,0,16,"浙江大学光电学院");//显示数据到LCD12864子程序      
+ 112   1        Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
+ 113   1        Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
+ 114   1        Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
+ 115   1      
+ 116   1        musicLock();
+ 117   1      
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 3   
 
- 118   2          while(1){
- 119   3            KeyIO = 0xF0;
- 120   3            s1_s2_check();
- 121   3            if ((P1&0xF0)!=0xF0){
- 122   4              Delay_xMs(100);
- 123   4              if((KeyIO&0xF0)!=0xF0){
- 124   5                key = scankey();
- 125   5                while((KeyIO&0xF0)!=0xF0) KeyIO = 0xF0;
- 126   5                switch (key)
- 127   5                {
- 128   6                case 11:
- 129   6                  PlayMusic(); //音乐播放
- 130   6                  bee_Speak = 0;
- 131   6                  MenuDisplay(currentPage);
- 132   6                  break;
- 133   6                case 12:
- 134   6                  ManualPlay(); //演奏模式
- 135   6                  MenuDisplay(currentPage);
- 136   6                  break;
- 137   6                case 13:
- 138   6                  currentPage = 2; //1到2
- 139   6                  MenuDisplay(currentPage);
- 140   6                  break;
- 141   6                case 14:
- 142   6                  Record(); // 录音模式
- 143   6                  MenuDisplay(currentPage);
- 144   6                  break;
- 145   6                case 21:
- 146   6                  PlayRecord(); // 播放录音
- 147   6                  MenuDisplay(currentPage);
- 148   6                  break;
- 149   6                case 22:
- 150   6                  currentPage = 1; // 2到1
- 151   6                  MenuDisplay(currentPage);
- 152   6                  break;
- 153   6                case 23:
- 154   6                  currentPage = 3; // 2到3
- 155   6                  MenuDisplay(currentPage);
- 156   6                  break;
- 157   6                case 24:
- 158   6                  TestMode();
- 159   6                  MenuDisplay(currentPage);
- 160   6                  break;
- 161   6                case 31:
- 162   6                  currentPage = 2; // 3到2
- 163   6                  MenuDisplay(currentPage);
- 164   6                  break;
- 165   6                default:
- 166   6                  break;
- 167   6                }
- 168   5              }
- 169   4              Delay_xMs(2500);
- 170   4            }
- 171   3          }
- 172   2          Delay_xMs(2500);    
- 173   2        }
- 174   1      }
- 175          
- 176          /*******************定时器初始化********************/
- 177          void Time0_Init()
- 178          {
- 179   1       TMOD = 0x01;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 4   
+ 118   1        while(1)
+ 119   1        {
+ 120   2          s1_s2_check();
+ 121   2          P4M1=0x00;
+ 122   2          P4M0=0x00;
+ 123   2          Ini_Lcd();//液晶初始化子程序
+ 124   2          MenuDisplay(currentPage);
+ 125   2          while(1){
+ 126   3            KeyIO = 0xF0;
+ 127   3            s1_s2_check();
+ 128   3            if ((P1&0xF0)!=0xF0){
+ 129   4              Delay_xMs(100);
+ 130   4              if((KeyIO&0xF0)!=0xF0){
+ 131   5                key = scankey();
+ 132   5                while((KeyIO&0xF0)!=0xF0) KeyIO = 0xF0;
+ 133   5                switch (key)
+ 134   5                {
+ 135   6                case 11:
+ 136   6                  PlayMusic(); //音乐播放
+ 137   6                  bee_Speak = 0;
+ 138   6                  MenuDisplay(currentPage);
+ 139   6                  break;
+ 140   6                case 12:
+ 141   6                  ManualPlay(); //演奏模式
+ 142   6                  MenuDisplay(currentPage);
+ 143   6                  break;
+ 144   6                case 13:
+ 145   6                  currentPage = 2; //1到2
+ 146   6                  MenuDisplay(currentPage);
+ 147   6                  break;
+ 148   6                case 14:
+ 149   6                  Record(); // 录音模式
+ 150   6                  MenuDisplay(currentPage);
+ 151   6                  break;
+ 152   6                case 21:
+ 153   6                  PlayRecord(); // 播放录音
+ 154   6                  MenuDisplay(currentPage);
+ 155   6                  break;
+ 156   6                case 22:
+ 157   6                  currentPage = 1; // 2到1
+ 158   6                  MenuDisplay(currentPage);
+ 159   6                  break;
+ 160   6                case 23:
+ 161   6                  currentPage = 3; // 2到3
+ 162   6                  MenuDisplay(currentPage);
+ 163   6                  break;
+ 164   6                case 24:
+ 165   6                  TestMode();
+ 166   6                  MenuDisplay(currentPage);
+ 167   6                  break;
+ 168   6                case 31:
+ 169   6                  currentPage = 2; // 3到2
+ 170   6                  MenuDisplay(currentPage);
+ 171   6                  break;
+ 172   6                default:
+ 173   6                  break;
+ 174   6                }
+ 175   5              }
+ 176   4              Delay_xMs(2500);
+ 177   4            }
+ 178   3          }
+ 179   2          Delay_xMs(2500);    
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 4   
 
- 180   1       IE   = 0x82;
- 181   1       TH0  = 0xDC;
- 182   1       TL0  = 0x00;  //11.0592MZ
- 183   1      }
- 184          /****************播放音乐*************************/
- 185          void s1_s2_check(void)
- 186          {
- 187   1        if(P4&0x40) 
- 188   1          DLED_1 =1;
- 189   1        else  
- 190   1          DLED_1 =0;
- 191   1        if((P4&0x80)) 
- 192   1          DLED_2 =1;
- 193   1        else  
- 194   1          DLED_2 =0;
- 195   1      }
- 196          
- 197          /****************播放音乐*************************/
- 198          void Play_Song(unsigned char i)
- 199          {
- 200   1        unsigned char Temp1,Temp2;
- 201   1        unsigned int Addr,start;
- 202   1        unsigned int lineCount, loc;
- 203   1        unsigned char lrc[20];
- 204   1      
- 205   1        lineCount = 1;
- 206   1        loc = 0;
- 207   1        start = INDEX[i];
- 208   1        Addr = start;  
- 209   1        GetSheet(Addr);
- 210   1        
- 211   1        strncpy(lrc,  SheetUp, 16);
- 212   1        Disp(2,0,16,lrc);
- 213   1        strncpy(lrc, SheetMid, 16);
- 214   1        Disp(3,0,16,lrc);
- 215   1        strncpy(lrc, SheetDown, 16);
- 216   1        Disp(4,0,16,lrc);
- 217   1        Count = 0;    
- 218   1      
- 219   1        while(1)
- 220   1        {
- 221   2          
- 222   2          Temp1 = SONG[Addr++];
- 223   2            if ( Temp1 == 0xFF )
- 224   2            {
- 225   3              TR0 = 0;                 
- 226   3              Delay_xMs(100);
- 227   3            }
- 228   2            else if ( Temp1 == 0x00 )   
- 229   2            {
- 230   3              return;
- 231   3            }
- 232   2            else
- 233   2            {
- 234   3              Temp2 = SONG[Addr++];
- 235   3              TR0 = 1;
- 236   3            while(1)
- 237   3            {
- 238   4                bee_Speak = ~bee_Speak;
- 239   4                Delay_xMs(Temp1);
- 240   4                if ( Temp2 == Count )
- 241   4                {
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 5   
+ 180   2        }
+ 181   1      }
+ 182          
+ 183          /*******************定时器初始化********************/
+ 184          void Time0_Init()
+ 185          {
+ 186   1       TMOD = 0x01;
+ 187   1       IE   = 0x82;
+ 188   1       TH0  = 0xDC;
+ 189   1       TL0  = 0x00;  //11.0592MZ
+ 190   1      }
+ 191          /****************播放音乐*************************/
+ 192          void s1_s2_check(void)
+ 193          {
+ 194   1        if(P4&0x40) 
+ 195   1          DLED_1 =1;
+ 196   1        else  
+ 197   1          DLED_1 =0;
+ 198   1        if((P4&0x80)) 
+ 199   1          DLED_2 =1;
+ 200   1        else  
+ 201   1          DLED_2 =0;
+ 202   1      }
+ 203          
+ 204          /****************播放音乐*************************/
+ 205          void Play_Song(unsigned char i)
+ 206          {
+ 207   1        unsigned char Temp1,Temp2;
+ 208   1        unsigned int Addr,start;
+ 209   1        unsigned int lineCount, loc;
+ 210   1        unsigned char lrc[20];
+ 211   1      
+ 212   1        lineCount = 1;
+ 213   1        loc = 0;
+ 214   1        start = INDEX[i];
+ 215   1        Addr = start;  
+ 216   1        GetSheet(Addr);
+ 217   1        
+ 218   1        strncpy(lrc,  SheetUp, 16);
+ 219   1        Disp(2,0,16,lrc);
+ 220   1        strncpy(lrc, SheetMid, 16);
+ 221   1        Disp(3,0,16,lrc);
+ 222   1        strncpy(lrc, SheetDown, 16);
+ 223   1        Disp(4,0,16,lrc);
+ 224   1        Count = 0;    
+ 225   1      
+ 226   1        while(1)
+ 227   1        {
+ 228   2          
+ 229   2          Temp1 = SONG[Addr++];
+ 230   2            if ( Temp1 == 0xFF )
+ 231   2            {
+ 232   3              TR0 = 0;                 
+ 233   3              Delay_xMs(100);
+ 234   3            }
+ 235   2            else if ( Temp1 == 0x00 )   
+ 236   2            {
+ 237   3              return;
+ 238   3            }
+ 239   2            else
+ 240   2            {
+ 241   3              Temp2 = SONG[Addr++];
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 5   
 
- 242   5                if (Sheet2Note[Addr - start] > lineCount*16){
- 243   6                  loc = loc + 16;
- 244   6                  lineCount++;
- 245   6                  strncpy(lrc, SheetUp+loc, 16);
- 246   6                  Disp(2,0,16,lrc);
- 247   6                  strncpy(lrc, SheetMid+loc, 16);
- 248   6                  Disp(3,0,16,lrc);
- 249   6                  strncpy(lrc, SheetDown+loc, 16);
- 250   6                  Disp(4,0,16,lrc);
- 251   6                }
- 252   5                    Count = 0;
- 253   5                    break;
- 254   5                }
- 255   4              KeyIO=0xF0;
- 256   4              if ((P1&0xf0)!=0xf0) return;
- 257   4            }
- 258   3            }
- 259   2        }
- 260   1        bee_Speak = 0;  //关闭蜂鸣器
- 261   1      }
- 262          
- 263          
- 264          /*****************检测控制端口的状态*****************/
- 265          uchar ctrl_port_check(void)
- 266          {
- 267   1          SW_CTRL = 0xFF;
- 268   1          return  SW_CTRL&0xF0;
- 269   1      }
+ 242   3              TR0 = 1;
+ 243   3            while(1)
+ 244   3            {
+ 245   4                bee_Speak = ~bee_Speak;
+ 246   4                Delay_xMs(Temp1);
+ 247   4                if ( Temp2 == Count )
+ 248   4                {
+ 249   5                if (Sheet2Note[Addr - start] > lineCount*16){
+ 250   6                  loc = loc + 16;
+ 251   6                  lineCount++;
+ 252   6                  strncpy(lrc, SheetUp+loc, 16);
+ 253   6                  Disp(2,0,16,lrc);
+ 254   6                  strncpy(lrc, SheetMid+loc, 16);
+ 255   6                  Disp(3,0,16,lrc);
+ 256   6                  strncpy(lrc, SheetDown+loc, 16);
+ 257   6                  Disp(4,0,16,lrc);
+ 258   6                }
+ 259   5                    Count = 0;
+ 260   5                    break;
+ 261   5                }
+ 262   4              KeyIO=0xF0;
+ 263   4              if ((P1&0xf0)!=0xf0) return;
+ 264   4            }
+ 265   3            }
+ 266   2        }
+ 267   1        bee_Speak = 0;  //关闭蜂鸣器
+ 268   1      }
+ 269          
  270          
- 271          uchar scankey(void)//矩阵键盘翻转扫描
- 272          {
- 273   1        uint keyvalue=0;
- 274   1        uchar temp1,temp2,keycode;
- 275   1      
- 276   1        KeyIO=0xf0;   //行置0列置1
- 277   1        temp1=KeyIO&0xf0;
- 278   1        if((temp1&0xf0)==0xf0) return(0);  //若无键按下返回0
- 279   1        KeyIO=0x0f;
- 280   1        temp2=KeyIO&0x0f;            //若有键按下，行置1列置0
- 281   1        keycode=~(temp1|temp2);        //获得键盘码
- 282   1        switch(keycode)            //根据键盘码返回键值
- 283   1        {
- 284   2          case 0x11:return(11);break;
- 285   2          case 0x21:return(12);break;
- 286   2          case 0x41:return(13);break;
- 287   2          case 0x81:return(14);break;
- 288   2          case 0x12:return(21);break;
- 289   2          case 0x22:return(22);break;
- 290   2          case 0x42:return(23);break;
- 291   2          case 0x82:return(24);break;
- 292   2          case 0x14:return(31);break;
- 293   2          case 0x24:return(32);break;
- 294   2          case 0x44:return(33);break;
- 295   2          case 0x84:return(34);break;
- 296   2          case 0x18:return(41);break;
- 297   2          case 0x28:return(42);break;
- 298   2          case 0x48:return(43);break;
- 299   2          case 0x88:return(44);break;
- 300   2          default:  return(0);break;
- 301   2        }
- 302   1        return(0);
- 303   1      }
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 6   
+ 271          /*****************检测控制端口的状态*****************/
+ 272          uchar ctrl_port_check(void)
+ 273          {
+ 274   1          SW_CTRL = 0xFF;
+ 275   1          return  SW_CTRL&0xF0;
+ 276   1      }
+ 277          
+ 278          uchar scankey(void)//矩阵键盘翻转扫描
+ 279          {
+ 280   1        uint keyvalue=0;
+ 281   1        uchar temp1,temp2,keycode;
+ 282   1      
+ 283   1        KeyIO=0xf0;   //行置0列置1
+ 284   1        temp1=KeyIO&0xf0;
+ 285   1        if((temp1&0xf0)==0xf0) return(0);  //若无键按下返回0
+ 286   1        KeyIO=0x0f;
+ 287   1        temp2=KeyIO&0x0f;            //若有键按下，行置1列置0
+ 288   1        keycode=~(temp1|temp2);        //获得键盘码
+ 289   1        switch(keycode)            //根据键盘码返回键值
+ 290   1        {
+ 291   2          case 0x11:return(11);break;
+ 292   2          case 0x21:return(12);break;
+ 293   2          case 0x41:return(13);break;
+ 294   2          case 0x81:return(14);break;
+ 295   2          case 0x12:return(21);break;
+ 296   2          case 0x22:return(22);break;
+ 297   2          case 0x42:return(23);break;
+ 298   2          case 0x82:return(24);break;
+ 299   2          case 0x14:return(31);break;
+ 300   2          case 0x24:return(32);break;
+ 301   2          case 0x44:return(33);break;
+ 302   2          case 0x84:return(34);break;
+ 303   2          case 0x18:return(41);break;
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 6   
 
- 304             
- 305          /****************延迟毫秒数************************/
- 306          void Delay_xMs(unsigned int x)
- 307          {
- 308   1          unsigned int i,j;
- 309   1          for( i = 0;i < x;i++ )
- 310   1          {
- 311   2              for( j = 0;j<2;j++ );
- 312   2          }
- 313   1      }
- 314          
- 315          // 菜单功能函数
- 316          
- 317          void MenuDisplay(int page){
- 318   1        Ini_Lcd();
- 319   1        switch (page)
- 320   1        {
- 321   2        case 1:
- 322   2          Disp(1,3,4,"菜单");
- 323   2          Disp(2,0,10,"1.播放音乐");
- 324   2          Disp(3,0,10,"2.弹奏模式");
- 325   2          Disp(4,0,8,"3.下一页");
- 326   2          break;
- 327   2        case 2:
- 328   2          Disp(1,0,10,"4.录音模式");
- 329   2          Disp(2,0,10,"5.播放录音");
- 330   2          Disp(3,0,8,"6.上一页");
- 331   2          Disp(4,0,8,"7.下一页");
- 332   2          break;
- 333   2        case 3:
- 334   2          Disp(1,0,10,"8.练习模式");
- 335   2          Disp(2,0,8,"9.上一页");
- 336   2          break;
- 337   2        default:
- 338   2          break;
- 339   2        }
- 340   1      
- 341   1      }
- 342          
- 343          void PlayMusic(){
- 344   1        Ini_Lcd();
- 345   1        Disp(1,0,8,"1.新宝岛");
- 346   1        Disp(2,0,6,"2.爱河");
- 347   1        Disp(3,0,10,"3.祝你平安");
- 348   1        Disp(4,0,10,"4.天空之城");
- 349   1      
- 350   1        Time0_Init();
- 351   1        KeyIO = 0xF0;
- 352   1        while(1){
- 353   2          s1_s2_check();
- 354   2          if ((P1&0xF0)!=0xF0){
- 355   3            Delay_xMs(100);
- 356   3            if((KeyIO&0xF0)!=0xF0){
- 357   4              key = scankey();
- 358   4              switch (key)
- 359   4              {
- 360   5              case 11:
- 361   5                Ini_Lcd();
- 362   5                Disp(1,0,8,"1.新宝岛");
- 363   5                Play_Song(0);
- 364   5                return;
- 365   5                break;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 7   
+ 304   2          case 0x28:return(42);break;
+ 305   2          case 0x48:return(43);break;
+ 306   2          case 0x88:return(44);break;
+ 307   2          default:  return(0);break;
+ 308   2        }
+ 309   1        return(0);
+ 310   1      }
+ 311             
+ 312          /****************延迟毫秒数************************/
+ 313          void Delay_xMs(unsigned int x)
+ 314          {
+ 315   1          unsigned int i,j;
+ 316   1          for( i = 0;i < x;i++ )
+ 317   1          {
+ 318   2              for( j = 0;j<2;j++ );
+ 319   2          }
+ 320   1      }
+ 321          
+ 322          // 菜单功能函数
+ 323          
+ 324          void MenuDisplay(int page){
+ 325   1        Ini_Lcd();
+ 326   1        switch (page)
+ 327   1        {
+ 328   2        case 1:
+ 329   2          Disp(1,3,4,"菜单");
+ 330   2          Disp(2,0,10,"1.播放音乐");
+ 331   2          Disp(3,0,10,"2.弹奏模式");
+ 332   2          Disp(4,0,8,"3.下一页");
+ 333   2          break;
+ 334   2        case 2:
+ 335   2          Disp(1,0,10,"4.录音模式");
+ 336   2          Disp(2,0,10,"5.播放录音");
+ 337   2          Disp(3,0,8,"6.上一页");
+ 338   2          Disp(4,0,8,"7.下一页");
+ 339   2          break;
+ 340   2        case 3:
+ 341   2          Disp(1,0,10,"8.练习模式");
+ 342   2          Disp(2,0,8,"9.上一页");
+ 343   2          break;
+ 344   2        default:
+ 345   2          break;
+ 346   2        }
+ 347   1      
+ 348   1      }
+ 349          
+ 350          void PlayMusic(){
+ 351   1        Ini_Lcd();
+ 352   1        Disp(1,0,8,"1.新宝岛");
+ 353   1        Disp(2,0,6,"2.爱河");
+ 354   1        Disp(3,0,10,"3.祝你平安");
+ 355   1        Disp(4,0,10,"4.天空之城");
+ 356   1      
+ 357   1        Time0_Init();
+ 358   1        KeyIO = 0xF0;
+ 359   1        while(1){
+ 360   2          s1_s2_check();
+ 361   2          if ((P1&0xF0)!=0xF0){
+ 362   3            Delay_xMs(100);
+ 363   3            if((KeyIO&0xF0)!=0xF0){
+ 364   4              key = scankey();
+ 365   4              switch (key)
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 7   
 
- 366   5              case 12:
- 367   5                Ini_Lcd();
- 368   5                Disp(1,0,6,"2.爱河");
- 369   5                Play_Song(1);
- 370   5                return;
- 371   5                break;
- 372   5              case 13:
- 373   5                Ini_Lcd();
- 374   5                Disp(1,0,10,"3.祝你平安");
- 375   5                Play_Song(2);
- 376   5                return;
- 377   5                break;
- 378   5              case 14:
- 379   5                Ini_Lcd();
- 380   5                Disp(1,0,10,"4.天空之城");
- 381   5                Play_Song(3);
- 382   5                return;
- 383   5                break;
- 384   5              default:
- 385   5                return;
- 386   5                break;
- 387   5              }
- 388   4            }
- 389   3            Delay_xMs(2500);
- 390   3          }
- 391   2        }
- 392   1      }
- 393          
- 394          void ManualPlay(){
- 395   1        s1_s2_check();
- 396   1        Ini_Lcd();
- 397   1        Disp(1,2,8,"演奏模式");
- 398   1        Disp(4,1,12,"按任意键返回");
- 399   1        while(1) {
- 400   2          KeyIO=0xF0;
- 401   2          if ((P1&0xf0)!=0xf0) {
- 402   3            Delay_xMs(100);
- 403   3            if((KeyIO&0xF0)!=0xF0){
- 404   4              key = scankey();
- 405   4              return;
- 406   4              break;
- 407   4            }
- 408   3            Delay_xMs(100);
- 409   3          }
- 410   2          OPT_CHECK = 0xFF;
- 411   2          s1_s2_check();
- 412   2          pitch = 7 + DLED_2*7 - DLED_1*7;
- 413   2          if (pitch == 14){
- 414   3            Disp(2,3,4,"高音");
- 415   3          } else if (pitch == 7){
- 416   3            Disp(2,3,4,"中音");
- 417   3          } else if (pitch == 0){
- 418   3            Disp(2,3,4,"低音");
- 419   3          }
- 420   2          if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch);
- 421   2           else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch);
- 422   2           else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch);
- 423   2           else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch);
- 424   2           else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch);
- 425   2           else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch);
- 426   2           else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch);  
- 427   2        }
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 8   
+ 366   4              {
+ 367   5              case 11:
+ 368   5                Ini_Lcd();
+ 369   5                Disp(1,0,8,"1.新宝岛");
+ 370   5                Play_Song(0);
+ 371   5                return;
+ 372   5                break;
+ 373   5              case 12:
+ 374   5                Ini_Lcd();
+ 375   5                Disp(1,0,6,"2.爱河");
+ 376   5                Play_Song(1);
+ 377   5                return;
+ 378   5                break;
+ 379   5              case 13:
+ 380   5                Ini_Lcd();
+ 381   5                Disp(1,0,10,"3.祝你平安");
+ 382   5                Play_Song(2);
+ 383   5                return;
+ 384   5                break;
+ 385   5              case 14:
+ 386   5                Ini_Lcd();
+ 387   5                Disp(1,0,10,"4.天空之城");
+ 388   5                Play_Song(3);
+ 389   5                return;
+ 390   5                break;
+ 391   5              default:
+ 392   5                return;
+ 393   5                break;
+ 394   5              }
+ 395   4            }
+ 396   3            Delay_xMs(2500);
+ 397   3          }
+ 398   2        }
+ 399   1      }
+ 400          
+ 401          void ManualPlay(){
+ 402   1        s1_s2_check();
+ 403   1        Ini_Lcd();
+ 404   1        Disp(1,2,8,"演奏模式");
+ 405   1        Disp(4,1,12,"按任意键返回");
+ 406   1        while(1) {
+ 407   2          KeyIO=0xF0;
+ 408   2          if ((P1&0xf0)!=0xf0) {
+ 409   3            Delay_xMs(100);
+ 410   3            if((KeyIO&0xF0)!=0xF0){
+ 411   4              key = scankey();
+ 412   4              return;
+ 413   4              break;
+ 414   4            }
+ 415   3            Delay_xMs(100);
+ 416   3          }
+ 417   2          OPT_CHECK = 0xFF;
+ 418   2          s1_s2_check();
+ 419   2          pitch = 7 + DLED_2*7 - DLED_1*7;
+ 420   2          if (pitch == 14){
+ 421   3            Disp(2,3,4,"高音");
+ 422   3          } else if (pitch == 7){
+ 423   3            Disp(2,3,4,"中音");
+ 424   3          } else if (pitch == 0){
+ 425   3            Disp(2,3,4,"低音");
+ 426   3          }
+ 427   2          if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch, 1);
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 8   
 
- 428   1      }
- 429          
- 430          // 录制
- 431          
- 432          void Record(){
- 433   1        char continueFlag = 0;
- 434   1        int currentIndex = 0;
- 435   1        lastEndCount = 0;
- 436   1        lastStartCount = -1;
- 437   1        lastNote = 0x00;
- 438   1      
- 439   1        s1_s2_check();
- 440   1        Ini_Lcd();
- 441   1        Disp(1,2,8,"录音模式");
- 442   1        Disp(2,0,10,"1.开始录音");
- 443   1        
- 444   1        Disp(4,1,12,"按其他键返回");
- 445   1        
- 446   1        while(!continueFlag) {
- 447   2          KeyIO=0xF0;
- 448   2          if ((P1&0xf0)!=0xf0) {
- 449   3            Delay_xMs(100);
- 450   3            if((KeyIO&0xF0)!=0xF0){
- 451   4              key = scankey();
- 452   4              switch (key){
- 453   5                case 11: continueFlag = 1;break;
- 454   5                default: return;
- 455   5              }
- 456   4            }
- 457   3            Delay_xMs(100);
- 458   3          }
- 459   2        }
- 460   1        memset(RECORDED,0x00,sizeof(RECORDED));
- 461   1        Ini_Lcd();
- 462   1        Disp(4,0,16,"按任意键结束录音");
- 463   1        Count = 0;
- 464   1        Time0_Init();
- 465   1        while(1){
- 466   2          KeyIO=0xF0;
- 467   2          if ((P1&0xf0)!=0xf0) {
- 468   3            Delay_xMs(100);
- 469   3            if((KeyIO&0xF0)!=0xF0){
- 470   4              key = scankey();
- 471   4              Disp(3,0,8,"录音完成");
- 472   4              RECORDED[currentIndex] = lastNote;
- 473   4              RECORDED[currentIndex+1] = lastEndCount - lastStartCount; 
- 474   4              return;
- 475   4            }
- 476   3            Delay_xMs(100);
- 477   3          }
- 478   2          OPT_CHECK = 0xFF;
- 479   2          s1_s2_check();
- 480   2          pitch = 7 + DLED_2*7 - DLED_1*7;
- 481   2          if (pitch == 14){
- 482   3            Disp(2,3,4,"高音");
- 483   3          } else if (pitch == 7){
- 484   3            Disp(2,3,4,"中音");
- 485   3          } else if (pitch == 0){
- 486   3            Disp(2,3,4,"低音");
- 487   3          }
- 488   2          if (OPT_CHECK&0x01) currentIndex = Recordnote(0x01, 7+pitch, currentIndex);
- 489   2          else if (OPT_CHECK&0x02) currentIndex  = Recordnote(0x02, 6+pitch, currentIndex);
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 9   
+ 428   2           else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch, 1);
+ 429   2           else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch, 1);
+ 430   2           else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch, 1);
+ 431   2           else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch, 1);
+ 432   2           else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch, 1);
+ 433   2           else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch, 1); 
+ 434   2        }
+ 435   1      }
+ 436          
+ 437          // 录制
+ 438          
+ 439          void Record(){
+ 440   1        char continueFlag = 0;
+ 441   1        int currentIndex = 0;
+ 442   1        lastEndCount = 0;
+ 443   1        lastStartCount = -1;
+ 444   1        lastNote = 0x00;
+ 445   1      
+ 446   1        s1_s2_check();
+ 447   1        Ini_Lcd();
+ 448   1        Disp(1,2,8,"录音模式");
+ 449   1        Disp(2,0,10,"1.开始录音");
+ 450   1        
+ 451   1        Disp(4,1,12,"按其他键返回");
+ 452   1        
+ 453   1        while(!continueFlag) {
+ 454   2          KeyIO=0xF0;
+ 455   2          if ((P1&0xf0)!=0xf0) {
+ 456   3            Delay_xMs(100);
+ 457   3            if((KeyIO&0xF0)!=0xF0){
+ 458   4              key = scankey();
+ 459   4              switch (key){
+ 460   5                case 11: continueFlag = 1;break;
+ 461   5                default: return;
+ 462   5              }
+ 463   4            }
+ 464   3            Delay_xMs(100);
+ 465   3          }
+ 466   2        }
+ 467   1        memset(RECORDED,0x00,sizeof(RECORDED));
+ 468   1        Ini_Lcd();
+ 469   1        Disp(4,0,16,"按任意键结束录音");
+ 470   1        Count = 0;
+ 471   1        Time0_Init();
+ 472   1        while(1){
+ 473   2          KeyIO=0xF0;
+ 474   2          if ((P1&0xf0)!=0xf0) {
+ 475   3            Delay_xMs(100);
+ 476   3            if((KeyIO&0xF0)!=0xF0){
+ 477   4              key = scankey();
+ 478   4              Disp(3,0,8,"录音完成");
+ 479   4              RECORDED[currentIndex] = lastNote;
+ 480   4              RECORDED[currentIndex+1] = lastEndCount - lastStartCount; 
+ 481   4              return;
+ 482   4            }
+ 483   3            Delay_xMs(100);
+ 484   3          }
+ 485   2          OPT_CHECK = 0xFF;
+ 486   2          s1_s2_check();
+ 487   2          pitch = 7 + DLED_2*7 - DLED_1*7;
+ 488   2          if (pitch == 14){
+ 489   3            Disp(2,3,4,"高音");
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 9   
 
- 490   2          else if (OPT_CHECK&0x04) currentIndex  = Recordnote(0x04, 5+pitch, currentIndex);
- 491   2          else if (OPT_CHECK&0x08) currentIndex  = Recordnote(0x08, 4+pitch, currentIndex);
- 492   2          else if (OPT_CHECK&0x10) currentIndex  = Recordnote(0x10, 3+pitch, currentIndex);
- 493   2          else if (OPT_CHECK&0x20) currentIndex  = Recordnote(0x20, 2+pitch, currentIndex);
- 494   2          else if (OPT_CHECK&0x40) currentIndex  = Recordnote(0x40, 1+pitch, currentIndex); 
- 495   2        }
- 496   1        
- 497   1      }
- 498          
- 499          //音符录制
- 500          
- 501          int Recordnote(uchar flag, int i, int index){
- 502   1        char str[2] = "7";
- 503   1      
- 504   1        if (lastStartCount != -1){
- 505   2          RECORDED[index] = lastNote;
- 506   2          RECORDED[index+1] = Count - lastStartCount;
- 507   2        }
- 508   1      
- 509   1        if (i%7!=0) itoa(i%7,str,10);
- 510   1        Disp(3,4,1,str);
- 511   1        
- 512   1        
- 513   1        OPT_CHECK = 0xFF; 
- 514   1        lastStartCount = Count;
- 515   1        while (OPT_CHECK&flag){
- 516   2          bee_Speak = ~bee_Speak;
- 517   2          Delay_xMs(NOTE[i-1]);
- 518   2          OPT_CHECK = 0xFF;
- 519   2        }
- 520   1        lastEndCount = Count;
- 521   1        lastNote = NOTE[i-1];
- 522   1        return index+2;
- 523   1      }
- 524          
- 525          // 录音播放
- 526          
- 527          void PlayRecord()
- 528          {
- 529   1        unsigned char Temp1,Temp2;
- 530   1        unsigned int Addr;
- 531   1        char str[10];
- 532   1      
- 533   1        s1_s2_check();
- 534   1        Ini_Lcd();
- 535   1        Disp(1,2,8,"播放录音");
- 536   1        Disp(4,1,12,"按任意键返回");
- 537   1      
- 538   1             
- 539   1        Time0_Init();
- 540   1        Addr = 2;  
- 541   1        Count = 0; 
- 542   1        
- 543   1        while(1)
- 544   1        {
- 545   2          Temp1 = RECORDED[Addr++];
- 546   2            if ( Temp1 == 0xFF )  
- 547   2            {
- 548   3              TR0 = 0;                 
- 549   3              Delay_xMs(100);
- 550   3            }
- 551   2            else if ( Temp1 == 0x00 )   
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 10  
+ 490   3          } else if (pitch == 7){
+ 491   3            Disp(2,3,4,"中音");
+ 492   3          } else if (pitch == 0){
+ 493   3            Disp(2,3,4,"低音");
+ 494   3          }
+ 495   2          if (OPT_CHECK&0x01) currentIndex = Recordnote(0x01, 7+pitch, currentIndex);
+ 496   2          else if (OPT_CHECK&0x02) currentIndex  = Recordnote(0x02, 6+pitch, currentIndex);
+ 497   2          else if (OPT_CHECK&0x04) currentIndex  = Recordnote(0x04, 5+pitch, currentIndex);
+ 498   2          else if (OPT_CHECK&0x08) currentIndex  = Recordnote(0x08, 4+pitch, currentIndex);
+ 499   2          else if (OPT_CHECK&0x10) currentIndex  = Recordnote(0x10, 3+pitch, currentIndex);
+ 500   2          else if (OPT_CHECK&0x20) currentIndex  = Recordnote(0x20, 2+pitch, currentIndex);
+ 501   2          else if (OPT_CHECK&0x40) currentIndex  = Recordnote(0x40, 1+pitch, currentIndex); 
+ 502   2        }
+ 503   1        
+ 504   1      }
+ 505          
+ 506          //音符录制
+ 507          
+ 508          int Recordnote(uchar flag, int i, int index){
+ 509   1        char str[2] = "7";
+ 510   1      
+ 511   1        if (lastStartCount != -1){
+ 512   2          RECORDED[index] = lastNote;
+ 513   2          RECORDED[index+1] = Count - lastStartCount;
+ 514   2        }
+ 515   1      
+ 516   1        if (i%7!=0) itoa(i%7,str,10);
+ 517   1        Disp(3,4,1,str);
+ 518   1        
+ 519   1        
+ 520   1        OPT_CHECK = 0xFF; 
+ 521   1        lastStartCount = Count;
+ 522   1        while (OPT_CHECK&flag){
+ 523   2          bee_Speak = ~bee_Speak;
+ 524   2          Delay_xMs(NOTE[i-1]);
+ 525   2          OPT_CHECK = 0xFF;
+ 526   2        }
+ 527   1        lastEndCount = Count;
+ 528   1        lastNote = NOTE[i-1];
+ 529   1        return index+2;
+ 530   1      }
+ 531          
+ 532          // 录音播放
+ 533          
+ 534          void PlayRecord()
+ 535          {
+ 536   1        unsigned char Temp1,Temp2;
+ 537   1        unsigned int Addr;
+ 538   1        char str[10];
+ 539   1      
+ 540   1        s1_s2_check();
+ 541   1        Ini_Lcd();
+ 542   1        Disp(1,2,8,"播放录音");
+ 543   1        Disp(4,1,12,"按任意键返回");
+ 544   1      
+ 545   1             
+ 546   1        Time0_Init();
+ 547   1        Addr = 2;  
+ 548   1        Count = 0; 
+ 549   1        
+ 550   1        while(1)
+ 551   1        {
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 10  
 
- 552   2            {
- 553   3              return;
- 554   3            }
- 555   2            else
- 556   2            {
- 557   3            showNote(Temp1,2,3);
- 558   3            Temp2 = SONG[Addr++];
- 559   3              TR0 = 1;
- 560   3            while(1)
- 561   3            {
- 562   4                bee_Speak = ~bee_Speak;
- 563   4                Delay_xMs(Temp1);
- 564   4                if ( Temp2 == Count )
- 565   4                {
- 566   5                   Count = 0;
- 567   5                   break;
- 568   5                }
- 569   4              KeyIO=0xF0;
- 570   4              if ((P1&0xf0)!=0xf0) return;
- 571   4            }
- 572   3            }
- 573   2        }
- 574   1        bee_Speak = 0;  //关闭蜂鸣器
- 575   1      }
-*** WARNING C280 IN LINE 531 OF main.c: 'str': unreferenced local variable
- 576          
- 577          // 简谱生成
- 578          
- 579          void GetSheet(int start){
- 580   1        unsigned char Temp1,Temp2;
- 581   1        unsigned int Addr, Index;
- 582   1      
- 583   1        Addr = start; Index = 0;
- 584   1        Temp1 = SONG[Addr];
- 585   1        while (Temp1 != 0x00){
- 586   2          Sheet2Note[Addr - start] = Index;
- 587   2          switch (Temp1){
- 588   3            case 0x60:
- 589   3            case 0x30:
- 590   3            case 0x18:
- 591   3              SheetMid[Index] = '1';
- 592   3              break;
- 593   3            case 0x56:
- 594   3            case 0x2b:
- 595   3            case 0x15:
- 596   3              SheetMid[Index] = '2';
- 597   3              break;
- 598   3            case 0x4C:
- 599   3            case 0x26:
- 600   3            case 0x13:
- 601   3              SheetMid[Index] = '3';
- 602   3              break;
- 603   3            case 0x48:
- 604   3            case 0x24:
- 605   3            case 0x12:
- 606   3              SheetMid[Index] = '4';
- 607   3              break;
- 608   3            case 0x40:
- 609   3            case 0x20:
- 610   3            case 0x10:
- 611   3              SheetMid[Index] = '5';
- 612   3              break;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 11  
+ 552   2          Temp1 = RECORDED[Addr++];
+ 553   2            if ( Temp1 == 0xFF )  
+ 554   2            {
+ 555   3              TR0 = 0;                 
+ 556   3              Delay_xMs(100);
+ 557   3            }
+ 558   2            else if ( Temp1 == 0x00 )   
+ 559   2            {
+ 560   3              return;
+ 561   3            }
+ 562   2            else
+ 563   2            {
+ 564   3            showNote(Temp1,2,3);
+ 565   3            Temp2 = SONG[Addr++];
+ 566   3              TR0 = 1;
+ 567   3            while(1)
+ 568   3            {
+ 569   4                bee_Speak = ~bee_Speak;
+ 570   4                Delay_xMs(Temp1);
+ 571   4                if ( Temp2 == Count )
+ 572   4                {
+ 573   5                   Count = 0;
+ 574   5                   break;
+ 575   5                }
+ 576   4              KeyIO=0xF0;
+ 577   4              if ((P1&0xf0)!=0xf0) return;
+ 578   4            }
+ 579   3            }
+ 580   2        }
+ 581   1        bee_Speak = 0;  //关闭蜂鸣器
+ 582   1      }
+*** WARNING C280 IN LINE 538 OF main.c: 'str': unreferenced local variable
+ 583          
+ 584          // 简谱生成
+ 585          
+ 586          void GetSheet(int start){
+ 587   1        unsigned char Temp1,Temp2;
+ 588   1        unsigned int Addr, Index;
+ 589   1      
+ 590   1        Addr = start; Index = 0;
+ 591   1        Temp1 = SONG[Addr];
+ 592   1        while (Temp1 != 0x00){
+ 593   2          Sheet2Note[Addr - start] = Index;
+ 594   2          switch (Temp1){
+ 595   3            case 0x60:
+ 596   3            case 0x30:
+ 597   3            case 0x18:
+ 598   3              SheetMid[Index] = '1';
+ 599   3              break;
+ 600   3            case 0x56:
+ 601   3            case 0x2b:
+ 602   3            case 0x15:
+ 603   3              SheetMid[Index] = '2';
+ 604   3              break;
+ 605   3            case 0x4C:
+ 606   3            case 0x26:
+ 607   3            case 0x13:
+ 608   3              SheetMid[Index] = '3';
+ 609   3              break;
+ 610   3            case 0x48:
+ 611   3            case 0x24:
+ 612   3            case 0x12:
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 11  
 
- 613   3            case 0x39:
- 614   3            case 0x1C:
- 615   3            case 0x0E:
- 616   3              SheetMid[Index] = '6';
- 617   3              break;
- 618   3            case 0x32:
- 619   3            case 0x19:
- 620   3            case 0x0D:
- 621   3              SheetMid[Index] = '7';
- 622   3              break;
- 623   3            default:
- 624   3              Addr++;
- 625   3              Temp1 = SONG[Addr];
- 626   3              continue;
- 627   3              break;
- 628   3          }
- 629   2          if (Temp1 == 0xFF) continue;
- 630   2          if (Temp1 >= 0x32){
- 631   3            SheetDown[Index] = '.';
- 632   3            SheetUp[Index] = ' ';
- 633   3          } else if (Temp1 <= 0x18){
- 634   3            SheetUp[Index] = '.';
- 635   3            SheetDown[Index] = ' ';
- 636   3          } else {
- 637   3            SheetUp[Index] = ' ';
- 638   3            SheetDown[Index] = ' ';
- 639   3          }
- 640   2          Addr++;
- 641   2          Temp2 = SONG[Addr];
- 642   2          if (Temp2 == 0x20) {
- 643   3            Addr++;
- 644   3            Index++;
- 645   3            Temp1 = SONG[Addr];
- 646   3            continue;
- 647   3          }
- 648   2          else if (Temp2 == 0x10)
- 649   2            SheetDown[Index] = '-';
- 650   2          else if (Temp2 == 0x08)
- 651   2            SheetDown[Index] = '=';
- 652   2          else if (Temp2 == 0x30){
- 653   3            Index++;
- 654   3            SheetMid[Index] = '.';
- 655   3            SheetDown[Index] = ' ';
- 656   3            SheetUp[Index] = ' ';
- 657   3          } else if (Temp2 >= 0x40){
- 658   3            Temp2 = Temp2 - 0x20;
- 659   3            while (Temp2 >= 0x20){
- 660   4              Index++;
- 661   4              SheetMid[Index] = '-';
- 662   4              SheetDown[Index] = ' ';
- 663   4              SheetUp[Index] = ' ';
- 664   4              Temp2 = Temp2 - 0x20;
- 665   4            }
- 666   3          }
- 667   2          Addr++;
- 668   2          Index++;
- 669   2          Temp1 = SONG[Addr];
- 670   2        }
- 671   1        return;
- 672   1      }
- 673          
- 674          char Testnote(uchar flag, int i, int answer){
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 12  
+ 613   3              SheetMid[Index] = '4';
+ 614   3              break;
+ 615   3            case 0x40:
+ 616   3            case 0x20:
+ 617   3            case 0x10:
+ 618   3              SheetMid[Index] = '5';
+ 619   3              break;
+ 620   3            case 0x39:
+ 621   3            case 0x1C:
+ 622   3            case 0x0E:
+ 623   3              SheetMid[Index] = '6';
+ 624   3              break;
+ 625   3            case 0x32:
+ 626   3            case 0x19:
+ 627   3            case 0x0D:
+ 628   3              SheetMid[Index] = '7';
+ 629   3              break;
+ 630   3            default:
+ 631   3              Addr++;
+ 632   3              Temp1 = SONG[Addr];
+ 633   3              continue;
+ 634   3              break;
+ 635   3          }
+ 636   2          if (Temp1 == 0xFF) continue;
+ 637   2          if (Temp1 >= 0x32){
+ 638   3            SheetDown[Index] = '.';
+ 639   3            SheetUp[Index] = ' ';
+ 640   3          } else if (Temp1 <= 0x18){
+ 641   3            SheetUp[Index] = '.';
+ 642   3            SheetDown[Index] = ' ';
+ 643   3          } else {
+ 644   3            SheetUp[Index] = ' ';
+ 645   3            SheetDown[Index] = ' ';
+ 646   3          }
+ 647   2          Addr++;
+ 648   2          Temp2 = SONG[Addr];
+ 649   2          if (Temp2 == 0x20) {
+ 650   3            Addr++;
+ 651   3            Index++;
+ 652   3            Temp1 = SONG[Addr];
+ 653   3            continue;
+ 654   3          }
+ 655   2          else if (Temp2 == 0x10)
+ 656   2            SheetDown[Index] = '-';
+ 657   2          else if (Temp2 == 0x08)
+ 658   2            SheetDown[Index] = '=';
+ 659   2          else if (Temp2 == 0x30){
+ 660   3            Index++;
+ 661   3            SheetMid[Index] = '.';
+ 662   3            SheetDown[Index] = ' ';
+ 663   3            SheetUp[Index] = ' ';
+ 664   3          } else if (Temp2 >= 0x40){
+ 665   3            Temp2 = Temp2 - 0x20;
+ 666   3            while (Temp2 >= 0x20){
+ 667   4              Index++;
+ 668   4              SheetMid[Index] = '-';
+ 669   4              SheetDown[Index] = ' ';
+ 670   4              SheetUp[Index] = ' ';
+ 671   4              Temp2 = Temp2 - 0x20;
+ 672   4            }
+ 673   3          }
+ 674   2          Addr++;
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 12  
 
- 675   1        
- 676   1        OPT_CHECK = 0xFF;
- 677   1        while (OPT_CHECK&flag){
- 678   2          bee_Speak = ~bee_Speak;
- 679   2          Delay_xMs(NOTE[i-1]);
- 680   2          OPT_CHECK = 0xFF;
- 681   2        }
- 682   1        if (NOTE[i-1] == answer) return 0;
- 683   1        return 1;
- 684   1      }
- 685          
- 686          void TestSong(unsigned int i){
- 687   1        unsigned char Temp1;
- 688   1        unsigned int Addr,start;
- 689   1        unsigned int lineCount, loc;
- 690   1        unsigned char lrc[20];
- 691   1        unsigned int errorCount = 0;
- 692   1        char errorCountStr[10];
- 693   1        char errorFlag = 0;
- 694   1      
- 695   1        lineCount = 1;
- 696   1        loc = 0;
- 697   1        start = INDEX[i];
- 698   1        Addr = start;  
- 699   1        GetSheet(Addr);
- 700   1        
- 701   1        strncpy(lrc,  SheetUp, 16);
- 702   1        Disp(2,0,16,lrc);
- 703   1        strncpy(lrc, SheetMid, 16);
- 704   1        Disp(3,0,16,lrc);
- 705   1        strncpy(lrc, SheetDown, 16);
- 706   1        Disp(4,0,16,lrc); 
- 707   1      
- 708   1        Temp1 = SONG[Addr];
- 709   1        while(Temp1!=0x00){
- 710   2          if (Temp1 == 0xFF){
- 711   3            Addr++;
- 712   3            Temp1 = SONG[Addr];
- 713   3          }
- 714   2          while (1){
- 715   3            s1_s2_check();
- 716   3            pitch = DLED_1*7-DLED_2*7;
- 717   3            OPT_CHECK = 0xFF;
- 718   3            if (OPT_CHECK&0x01) {
- 719   4              errorFlag = Testnote(0x01, 7+pitch, Temp1);
- 720   4              break;
- 721   4            }
- 722   3            else if (OPT_CHECK&0x02) {
- 723   4              errorFlag = Testnote(0x02, 6+pitch, Temp1);
- 724   4              break;
- 725   4            }
- 726   3            else if (OPT_CHECK&0x04) {
- 727   4              errorFlag = Testnote(0x04, 5+pitch, Temp1);
- 728   4              break;
- 729   4            }
- 730   3            else if (OPT_CHECK&0x08) {
- 731   4              errorFlag = Testnote(0x08, 4+pitch, Temp1);
- 732   4              break;
+ 675   2          Index++;
+ 676   2          Temp1 = SONG[Addr];
+ 677   2        }
+ 678   1        return;
+ 679   1      }
+ 680          
+ 681          char Testnote(uchar flag, int i, int answer){
+ 682   1        
+ 683   1        OPT_CHECK = 0xFF;
+ 684   1        while (OPT_CHECK&flag){
+ 685   2          bee_Speak = ~bee_Speak;
+ 686   2          Delay_xMs(NOTE[i-1]);
+ 687   2          OPT_CHECK = 0xFF;
+ 688   2        }
+ 689   1        if (NOTE[i-1] == answer) return 0;
+ 690   1        return 1;
+ 691   1      }
+ 692          
+ 693          void TestSong(unsigned int i){
+ 694   1        unsigned char Temp1;
+ 695   1        unsigned int Addr,start;
+ 696   1        unsigned int lineCount, loc;
+ 697   1        unsigned char lrc[20];
+ 698   1        unsigned int errorCount = 0;
+ 699   1        char errorCountStr[10];
+ 700   1        char errorFlag = 0;
+ 701   1      
+ 702   1        lineCount = 1;
+ 703   1        loc = 0;
+ 704   1        start = INDEX[i];
+ 705   1        Addr = start;  
+ 706   1        GetSheet(Addr);
+ 707   1        
+ 708   1        strncpy(lrc,  SheetUp, 16);
+ 709   1        Disp(2,0,16,lrc);
+ 710   1        strncpy(lrc, SheetMid, 16);
+ 711   1        Disp(3,0,16,lrc);
+ 712   1        strncpy(lrc, SheetDown, 16);
+ 713   1        Disp(4,0,16,lrc); 
+ 714   1      
+ 715   1        Temp1 = SONG[Addr];
+ 716   1        while(Temp1!=0x00){
+ 717   2          if (Temp1 == 0xFF){
+ 718   3            Addr++;
+ 719   3            Temp1 = SONG[Addr];
+ 720   3          }
+ 721   2          while (1){
+ 722   3            s1_s2_check();
+ 723   3            pitch = DLED_1*7-DLED_2*7;
+ 724   3            OPT_CHECK = 0xFF;
+ 725   3            if (OPT_CHECK&0x01) {
+ 726   4              errorFlag = Testnote(0x01, 7+pitch, Temp1);
+ 727   4            }
+ 728   3            else if (OPT_CHECK&0x02) {
+ 729   4              errorFlag = Testnote(0x02, 6+pitch, Temp1);
+ 730   4            }
+ 731   3            else if (OPT_CHECK&0x04) {
+ 732   4              errorFlag = Testnote(0x04, 5+pitch, Temp1);
  733   4            }
- 734   3            else if (OPT_CHECK&0x10) {
- 735   4              errorFlag = Testnote(0x10, 3+pitch, Temp1);
- 736   4              break;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 13  
+ 734   3            else if (OPT_CHECK&0x08) {
+ 735   4              errorFlag = Testnote(0x08, 4+pitch, Temp1);
+ 736   4            }
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 13  
 
- 737   4            }
- 738   3            else if (OPT_CHECK&0x20) {
- 739   4              errorFlag = Testnote(0x20, 2+pitch, Temp1);
- 740   4              break;
- 741   4            }
- 742   3            else if (OPT_CHECK&0x40) {
- 743   4              errorFlag = Testnote(0x40, 1+pitch, Temp1);
- 744   4              break;
+ 737   3            else if (OPT_CHECK&0x10) {
+ 738   4              errorFlag = Testnote(0x10, 3+pitch, Temp1);
+ 739   4            }
+ 740   3            else if (OPT_CHECK&0x20) {
+ 741   4              errorFlag = Testnote(0x20, 2+pitch, Temp1);
+ 742   4            }
+ 743   3            else if (OPT_CHECK&0x40) {
+ 744   4              errorFlag = Testnote(0x40, 1+pitch, Temp1);
  745   4            }
  746   3          }
  747   2          if (errorFlag){
@@ -830,7 +830,7 @@ line level    source
  796   3            if((KeyIO&0xF0)!=0xF0){
  797   4              key = scankey();
  798   4              switch (key)
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 14  
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 14  
 
  799   4              {
  800   5              case 11:
@@ -894,7 +894,7 @@ line level    source
  858   2            break;
  859   2          case 0x40:
  860   2          case 0x20:
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 23:26:35 PAGE 15  
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 15  
 
  861   2          case 0x10:
  862   2            Disp(line2,4,1,"5");
@@ -913,16 +913,122 @@ line level    source
  875   2            break;
  876   2        }
  877   1      }
-*** WARNING C294 IN LINE 172 OF main.c: unreachable code
-*** WARNING C294 IN LINE 260 OF main.c: unreachable code
-*** WARNING C294 IN LINE 302 OF main.c: unreachable code
-*** WARNING C294 IN LINE 574 OF main.c: unreachable code
+ 878          
+ 879          void musicLock(){
+ 880   1        int nowPW = 0;
+ 881   1        //char str[2];
+ 882   1      
+ 883   1        while(nowPW < 5){
+ 884   2          //itoa(nowPW, str, 10);
+ 885   2          //Disp(4,0,1,str);
+ 886   2          
+ 887   2          if (nowPW == 0){
+ 888   3            Ini_Lcd();
+ 889   3            Disp(1,0,16,"请演奏以输入密码");
+ 890   3            Disp(2,0,9,"_ _ _ _ _");
+ 891   3          }
+ 892   2          OPT_CHECK = 0xFF;
+ 893   2          if (OPT_CHECK&0x01) {
+ 894   3              Playnote(0x01, 7, 0);
+ 895   3              if (password[nowPW] == 7) {
+ 896   4                Disp(2,nowPW,1,"7");
+ 897   4                nowPW++;
+ 898   4                Disp(3,2,8,"密码无误");
+ 899   4              }
+ 900   3              else {
+ 901   4                nowPW = 0;
+ 902   4                Disp(3,2,8,"密码错误");
+ 903   4              }
+ 904   3            }
+ 905   2            else if (OPT_CHECK&0x02) {
+ 906   3              Playnote(0x02, 6, 0);
+ 907   3              if (password[nowPW] == 6) {
+ 908   4                Disp(2,nowPW,1,"6");
+ 909   4                nowPW++;
+ 910   4                Disp(3,2,8,"密码无误");
+ 911   4              }
+ 912   3              else {
+ 913   4                nowPW = 0;
+ 914   4                Disp(3,2,8,"密码错误");
+ 915   4              }
+ 916   3            }
+ 917   2            else if (OPT_CHECK&0x04) {
+ 918   3              Playnote(0x04, 5, 0);
+ 919   3              if (password[nowPW] == 5) {
+ 920   4                Disp(2,nowPW,1,"5");
+ 921   4                nowPW++;
+ 922   4                Disp(3,2,8,"密码无误");
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 16  
+
+ 923   4              }
+ 924   3              else {
+ 925   4                nowPW = 0;
+ 926   4                Disp(3,2,8,"密码错误");
+ 927   4              }
+ 928   3            }
+ 929   2            else if (OPT_CHECK&0x08) {
+ 930   3              Playnote(0x08, 4, 0);
+ 931   3              if (password[nowPW] == 4) {
+ 932   4                Disp(2,nowPW,1,"4");
+ 933   4                nowPW++;
+ 934   4                Disp(3,2,8,"密码无误");
+ 935   4              }
+ 936   3              else {
+ 937   4                nowPW = 0;
+ 938   4                Disp(3,2,8,"密码错误");
+ 939   4              }
+ 940   3            }
+ 941   2            else if (OPT_CHECK&0x10) {
+ 942   3              Playnote(0x10, 3, 0);
+ 943   3              if (password[nowPW] == 3) {
+ 944   4                Disp(2,nowPW,1,"3");
+ 945   4                nowPW++;
+ 946   4                Disp(3,2,8,"密码无误");
+ 947   4              }
+ 948   3              else {
+ 949   4                nowPW = 0;
+ 950   4                Disp(3,2,8,"密码错误");
+ 951   4              }
+ 952   3            }
+ 953   2            else if (OPT_CHECK&0x20) {
+ 954   3              Playnote(0x20, 2, 0);
+ 955   3              if (password[nowPW] == 2) {
+ 956   4                Disp(2,nowPW,1,"2");
+ 957   4                nowPW++;
+ 958   4                Disp(3,2,8,"密码正确");
+ 959   4              }
+ 960   3              else {
+ 961   4                nowPW = 0;
+ 962   4                Disp(3,2,8,"密码错误");
+ 963   4              }
+ 964   3            }
+ 965   2            else if (OPT_CHECK&0x40) {
+ 966   3              Playnote(0x40, 1, 0);
+ 967   3              if (password[nowPW] == 1) {
+ 968   4                Disp(2,nowPW,1,"1");
+ 969   4                nowPW++;
+ 970   4                Disp(3,2,8,"密码正确");
+ 971   4              }
+ 972   3              else {
+ 973   4                nowPW = 0;
+ 974   4                Disp(3,2,8,"密码错误");
+ 975   4              }
+ 976   3            }
+ 977   2        }
+ 978   1      }
+*** WARNING C294 IN LINE 179 OF main.c: unreachable code
+*** WARNING C294 IN LINE 267 OF main.c: unreachable code
+*** WARNING C294 IN LINE 309 OF main.c: unreachable code
+*** WARNING C294 IN LINE 581 OF main.c: unreachable code
+*** WARNING C294 IN LINE 747 OF main.c: unreachable code
+
+C51 COMPILER V9.60.0.0   MAIN                                                              08/22/2020 00:14:33 PAGE 17  
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   6634    ----
-   CONSTANT SIZE    =   1032    ----
-   XDATA SIZE       =   1543     136
+   CODE SIZE        =   7119    ----
+   CONSTANT SIZE    =   1085    ----
+   XDATA SIZE       =   1553     140
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
@@ -930,4 +1036,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  5 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  6 WARNING(S),  0 ERROR(S)

@@ -16,6 +16,7 @@ unsigned char Count;
 double pitch = 7;
 char pitchFlag = 1;
 char currentPage = 1;
+int password[5] = {1,2,3,4,5};
 unsigned char RECORDED[250];
 unsigned char SheetMid[250];
 unsigned char SheetUp[250];
@@ -69,11 +70,13 @@ void Time0_Int() interrupt 1
 	 Count++;   
 }
 
-void Playnote(uchar flag, int i){
+void Playnote(uchar flag, int i, int noteVisible){
 	char str[2] = "7";
 	OPT_CHECK = 0xFF;
-	if (i%7!=0) itoa(i%7,str,10);
-	Disp(3,4,1,str);
+	if (noteVisible){
+		if (i%7!=0) itoa(i%7,str,10);
+		Disp(3,4,1,str);
+	}
 	while (OPT_CHECK&flag){
 		bee_Speak = ~bee_Speak;
 		Delay_xMs(NOTE[i-1]);
@@ -421,13 +424,13 @@ void ManualPlay(){
 		} else if (pitch == 0){
 			Disp(2,3,4,"µÕ“Ù");
 		}
-	 	if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch);
-		 else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch);
-		 else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch);
-		 else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch);
-		 else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch);
-		 else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch);
-		 else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch);	
+	 	if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch, 1);
+		 else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch, 1);
+		 else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch, 1);
+		 else if (OPT_CHECK&0x08) Playnote(0x08, 4+pitch, 1);
+		 else if (OPT_CHECK&0x10) Playnote(0x10, 3+pitch, 1);
+		 else if (OPT_CHECK&0x20) Playnote(0x20, 2+pitch, 1);
+		 else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch, 1);	
 	}
 }
 
@@ -721,31 +724,24 @@ void TestSong(unsigned int i){
 			OPT_CHECK = 0xFF;
 			if (OPT_CHECK&0x01) {
 				errorFlag = Testnote(0x01, 7+pitch, Temp1);
-				break;
 			}
 			else if (OPT_CHECK&0x02) {
 				errorFlag = Testnote(0x02, 6+pitch, Temp1);
-				break;
 			}
 			else if (OPT_CHECK&0x04) {
 				errorFlag = Testnote(0x04, 5+pitch, Temp1);
-				break;
 			}
 			else if (OPT_CHECK&0x08) {
 				errorFlag = Testnote(0x08, 4+pitch, Temp1);
-				break;
 			}
 			else if (OPT_CHECK&0x10) {
 				errorFlag = Testnote(0x10, 3+pitch, Temp1);
-				break;
 			}
 			else if (OPT_CHECK&0x20) {
 				errorFlag = Testnote(0x20, 2+pitch, Temp1);
-				break;
 			}
 			else if (OPT_CHECK&0x40) {
 				errorFlag = Testnote(0x40, 1+pitch, Temp1);
-				break;
 			}
 		}
 		if (errorFlag){
@@ -881,5 +877,102 @@ void showNote(uchar note, int line1, int line2){
 }
 
 void musicLock(){
-	// TODO
+	int nowPW = 0;
+	//char str[2];
+
+	while(nowPW < 5){
+		//itoa(nowPW, str, 10);
+		//Disp(4,0,1,str);
+		
+		if (nowPW == 0){
+			Ini_Lcd();
+			Disp(1,0,16,"«Î—›◊‡“‘ ‰»Î√‹¬Î");
+			Disp(2,0,9,"_ _ _ _ _");
+		}
+		OPT_CHECK = 0xFF;
+	 	if (OPT_CHECK&0x01) {
+				Playnote(0x01, 7, 0);
+				if (password[nowPW] == 7) {
+					Disp(2,nowPW,1,"7");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+			else if (OPT_CHECK&0x02) {
+				Playnote(0x02, 6, 0);
+				if (password[nowPW] == 6) {
+					Disp(2,nowPW,1,"6");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+			else if (OPT_CHECK&0x04) {
+				Playnote(0x04, 5, 0);
+				if (password[nowPW] == 5) {
+					Disp(2,nowPW,1,"5");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+			else if (OPT_CHECK&0x08) {
+				Playnote(0x08, 4, 0);
+				if (password[nowPW] == 4) {
+					Disp(2,nowPW,1,"4");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+			else if (OPT_CHECK&0x10) {
+				Playnote(0x10, 3, 0);
+				if (password[nowPW] == 3) {
+					Disp(2,nowPW,1,"3");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+			else if (OPT_CHECK&0x20) {
+				Playnote(0x20, 2, 0);
+				if (password[nowPW] == 2) {
+					Disp(2,nowPW,1,"2");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+			else if (OPT_CHECK&0x40) {
+				Playnote(0x40, 1, 0);
+				if (password[nowPW] == 1) {
+					Disp(2,nowPW,1,"1");
+					nowPW++;
+					Disp(3,2,8,"√‹¬ÎŒﬁŒÛ");
+				}
+				else {
+					nowPW = 0;
+					Disp(3,2,8,"√‹¬Î¥ÌŒÛ");
+				}
+			}
+	}
 }

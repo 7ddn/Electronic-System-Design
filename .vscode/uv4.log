@@ -1,10 +1,11 @@
 Build target 'sys_pia'
 compiling main.c...
-main.c(531): warning C280: 'str': unreferenced local variable
-main.c(172): warning C294: unreachable code
-main.c(260): warning C294: unreachable code
-main.c(302): warning C294: unreachable code
-main.c(574): warning C294: unreachable code
+main.c(538): warning C280: 'str': unreferenced local variable
+main.c(179): warning C294: unreachable code
+main.c(267): warning C294: unreachable code
+main.c(309): warning C294: unreachable code
+main.c(581): warning C294: unreachable code
+main.c(747): warning C294: unreachable code
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?CTRL_PORT_CHECK?MAIN
@@ -39,7 +40,7 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_DELAYNUS?DISPLAY
 
-Program Size: data=9.0 xdata=1637 code=10867
+Program Size: data=9.0 xdata=1647 code=11418
 creating hex file from "sys_pia"...
-"sys_pia" - 0 Error(s), 16 Warning(s).
-Build Time Elapsed:  00:00:01
+"sys_pia" - 0 Error(s), 17 Warning(s).
+Build Time Elapsed:  00:00:00
