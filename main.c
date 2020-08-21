@@ -70,7 +70,10 @@ void Time0_Int() interrupt 1
 }
 
 void Playnote(uchar flag, int i){
+	char str[2] = "7";
 	OPT_CHECK = 0xFF;
+	if (i%7!=0) itoa(i%7,str,10);
+	Disp(3,4,1,str);
 	while (OPT_CHECK&flag){
 		bee_Speak = ~bee_Speak;
 		Delay_xMs(NOTE[i-1]);
@@ -87,6 +90,8 @@ int Recordnote(uchar, int, int);
 void PlayRecord();
 void GetSheet(int);
 void TestMode();
+void showNote(uchar, int, int);
+void musicLock();
 
 void main()
 {
@@ -104,6 +109,9 @@ void main()
 	Disp(2,1,12,"电子线路设计");//显示数据到LCD12864子程序
 	Disp(3,2,8,"87951197");//显示数据到LCD12864子程序
 	Disp(4,1,12,"液晶显示成功");//显示数据到LCD12864子程序*/
+
+	musicLock();
+
 	while(1)
 	{
 		s1_s2_check();
@@ -495,11 +503,18 @@ void Record(){
 //音符录制
 
 int Recordnote(uchar flag, int i, int index){
+	char str[2] = "7";
+
 	if (lastStartCount != -1){
 		RECORDED[index] = lastNote;
 		RECORDED[index+1] = Count - lastStartCount;
 	}
-	OPT_CHECK = 0xFF;
+
+	if (i%7!=0) itoa(i%7,str,10);
+	Disp(3,4,1,str);
+	
+	
+	OPT_CHECK = 0xFF;	
 	lastStartCount = Count;
 	while (OPT_CHECK&flag){
 		bee_Speak = ~bee_Speak;
@@ -517,6 +532,7 @@ void PlayRecord()
 {
 	unsigned char Temp1,Temp2;
 	unsigned int Addr;
+	char str[10];
 
 	s1_s2_check();
 	Ini_Lcd();
@@ -527,11 +543,7 @@ void PlayRecord()
 	Time0_Init();
 	Addr = 2;  
 	Count = 0; 
-	Temp1 = RECORDED[Addr];
-	if (Temp1 == 0x00){
-		Disp(1,0,6,"ERROR!");
-		while(1);
-	}
+	
 	while(1)
 	{
 		Temp1 = RECORDED[Addr++];
@@ -546,7 +558,8 @@ void PlayRecord()
 	    }
 	    else
 	    {
-		    Temp2 = RECORDED[Addr++];
+			showNote(Temp1,2,3);
+			Temp2 = SONG[Addr++];
 		    TR0 = 1;
 			while(1)
 			{
@@ -757,7 +770,7 @@ void TestSong(unsigned int i){
 	Ini_Lcd();
 	Disp(1,0,16,"Error Number is");
 	itoa(errorCount, errorCountStr, 10);
-	Disp(2,0,sizeof(errorCountStr), errorCountStr);	
+	Disp(2,0,strlen(errorCountStr), errorCountStr);	
 	while(1){
 		KeyIO=0xF0;
 		if ((P1&0xf0)!=0xf0) {
@@ -818,3 +831,55 @@ void TestMode(){
 	}
 }
 
+void showNote(uchar note, int line1, int line2){
+	if (note >= 0x32){
+		Disp(line1,3,4,"高音");
+	} else if (note <= 0x18){
+		Disp(line1,3,4,"低音");
+	} else {
+		Disp(line1,3,4,"中音");
+	}
+	switch (note){
+		case 0x60:
+		case 0x30:
+		case 0x18:
+			Disp(line2,4,1,"1");
+			break;
+		case 0x56:
+		case 0x2b:
+		case 0x15:
+			Disp(line2,4,1,"2");
+			break;
+		case 0x4C:
+		case 0x26:
+		case 0x13:
+			Disp(line2,4,1,"3");
+			break;
+		case 0x48:
+		case 0x24:
+		case 0x12:
+			Disp(line2,4,1,"4");
+			break;
+		case 0x40:
+		case 0x20:
+		case 0x10:
+			Disp(line2,4,1,"5");
+			break;
+		case 0x39:
+		case 0x1C:
+		case 0x0E:
+			Disp(line2,4,1,"6");
+			break;
+		case 0x32:
+		case 0x19:
+		case 0x0D:
+			Disp(line2,4,1,"7");
+			break;
+		default:
+			break;
+	}
+}
+
+void musicLock(){
+	// TODO
+}
