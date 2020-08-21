@@ -4,22 +4,24 @@
 #include <STC15F2K60S2.h>
 #include "sys_cfg.h"
 
+
+
 void Busy() ;
 void Write_Data(uchar k) ;
 void Write_Cmd(uchar cmd) ;
-void ShowQQChar(uchar addr,uchar *english,uchar count);//DDRAMµØÖ·£¬Êý¾ÝÊ××Ö½ÚÖ¸Õë£¬Êý¾Ý³¤¶È
-void Disp(uchar y,uchar x,uchar i,uchar *z);//×Ö·ûºÍºº×ÖÏÔÊ¾
-void WRCGRAM1(uchar addr);//µ¥ÏÂ»®Ïß
-void WRCGRAM2(uchar addr);//Ë«ÏÂ»®Ïß
-void WRCGRAM3(uchar addr);//µ¥ÏÂ»®Ïß¼Óµã
-void WRCGRAM4(uchar addr);//Ë«ÏÂ»®Ïß¼Óµã
-void CLEARGDRAM(void);//»æÍ¼ÇåÆÁ
+void ShowQQChar(uchar addr,uchar *english,uchar count);//DDRAMï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+void Disp(uchar y,uchar x,uchar i,uchar *z);//ï¿½Ö·ï¿½ï¿½Íºï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+void WRCGRAM1(uchar addr);//ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½
+void WRCGRAM2(uchar addr);//Ë«ï¿½Â»ï¿½ï¿½ï¿½
+void WRCGRAM3(uchar addr);//ï¿½ï¿½ï¿½Â»ï¿½ï¿½ß¼Óµï¿½
+void WRCGRAM4(uchar addr);//Ë«ï¿½Â»ï¿½ï¿½ß¼Óµï¿½
+void CLEARGDRAM(void);//ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
 void WRGDRAM(uchar Y1,uchar clong,uchar hight,uchar *TAB1);
 void Cursor(uchar x,uchar y);
-void DISPIcon(uchar x,uchar y,uchar clong,uchar hight,uchar *Icon);//²åÈëÍ¼±ê
+void DISPIcon(uchar x,uchar y,uchar clong,uchar hight,uchar *Icon);//ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
 void Ini_Lcd(void);  	 
-void antibackgroud(uint hang);//Ä³Ò»ÐÐÊ×·´°×ÏÔÊ¾;
+void antibackgroud(uint hang);//Ä³Ò»ï¿½ï¿½ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾;
 void Delay_1ms(uint x);
-void delayNus(uchar x);	//LCD´®¿ÚÊ±Ö¸ÁîºÍÊý¾ÝÖ®¼äµÄÑÓÊ±
+void delayNus(uchar x);	//LCDï¿½ï¿½ï¿½ï¿½Ê±Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½Ê±
 
 #endif
