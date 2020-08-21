@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -24,11 +24,11 @@ line level    source
   15          double pitch = 7;
   16          char pitchFlag = 1;
   17          char currentPage = 1;
-  18          unsigned char RECORDED[500];
-  19          unsigned char SheetMid[500];
-  20          unsigned char SheetUp[500];
-  21          unsigned char SheetDown[500];
-  22          unsigned int Sheet2Note[500];
+  18          unsigned char RECORDED[250];
+  19          unsigned char SheetMid[250];
+  20          unsigned char SheetUp[250];
+  21          unsigned char SheetDown[250];
+  22          unsigned int Sheet2Note[250];
   23          
   24          
   25          
@@ -62,7 +62,7 @@ line level    source
   53          void GetSheet(int);
   54          
   55          void main()
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 2   
 
   56          {
   57   1        P5M1=0x00;
@@ -126,7 +126,7 @@ line level    source
  115   4              Delay_xMs(2500);
  116   4            }
  117   3          }
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 3   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 3   
 
  118   2          Delay_xMs(2500);    
  119   2        }
@@ -159,21 +159,21 @@ line level    source
  146   1        unsigned char Temp1,Temp2;
  147   1        unsigned int Addr,start;
  148   1        unsigned int lineCount, loc;
- 149   1        unsigned char lrc[16];
+ 149   1        unsigned char lrc[20];
  150   1      
- 151   1        Count = 0;      
- 152   1        lineCount = 1;
- 153   1        loc = 0;
- 154   1        start = INDEX[i-1];
- 155   1        Addr = start;  
- 156   1        GetSheet(Addr);
- 157   1        
- 158   1        strncpy(lrc, SheetUp, 16);
- 159   1        Disp(2,0,16,lrc);
- 160   1        strncpy(lrc, SheetMid, 16);
- 161   1        Disp(3,0,16,lrc);
- 162   1        strncpy(lrc, SheetDown, 16);
- 163   1        Disp(4,0,16,lrc);
+ 151   1        lineCount = 1;
+ 152   1        loc = 0;
+ 153   1        start = INDEX[i];
+ 154   1        Addr = start;  
+ 155   1        GetSheet(Addr);
+ 156   1        
+ 157   1        strncpy(lrc,  SheetUp, 16);
+ 158   1        Disp(2,0,16,lrc);
+ 159   1        strncpy(lrc, SheetMid, 16);
+ 160   1        Disp(3,0,16,lrc);
+ 161   1        strncpy(lrc, SheetDown, 16);
+ 162   1        Disp(4,0,16,lrc);
+ 163   1        Count = 0;    
  164   1      
  165   1        while(1)
  166   1        {
@@ -190,7 +190,7 @@ line level    source
  177   3            }
  178   2            else
  179   2            {
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 4   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 4   
 
  180   3              Temp2 = SONG[Addr++];
  181   3              TR0 = 1;
@@ -254,7 +254,7 @@ line level    source
  239   2          case 0x24:return(32);break;
  240   2          case 0x44:return(33);break;
  241   2          case 0x84:return(34);break;
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 5   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 5   
 
  242   2          case 0x18:return(41);break;
  243   2          case 0x28:return(42);break;
@@ -318,7 +318,7 @@ line level    source
  301   3            Delay_xMs(100);
  302   3            if((KeyIO&0xF0)!=0xF0){
  303   4              key = scankey();
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 6   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 6   
 
  304   4              switch (key){
  305   5                case 12:
@@ -382,7 +382,7 @@ line level    source
  363   3          }
  364   2        }
  365   1        memset(RECORDED,0x00,sizeof(RECORDED));
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 7   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 7   
 
  366   1        Disp(2,0,6,"Â¼ÒôÖÐ");
  367   1        Disp(3,0,10,"2.½áÊøÂ¼Òô");
@@ -446,7 +446,7 @@ line level    source
  425   1      
  426   1        Count = 0;      
  427   1        Time0_Init();
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 8   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 8   
 
  428   1        Addr = 0;  
  429   1        while(1)
@@ -491,82 +491,95 @@ line level    source
  468   1        while (Temp1 != 0x00){
  469   2          Sheet2Note[Addr - start] = Index;
  470   2          switch (Temp1){
- 471   3            case 0x60,0x30,0x18:
- 472   3              SheetMid[Index] = '1';
- 473   3              break;
- 474   3            case 0x56,0x2b,0x15:
- 475   3              SheetMid[Index] = '2';
- 476   3              break;
- 477   3            case 0x4C,0x26,0x13:
- 478   3              SheetMid[Index] = '3';
- 479   3              break;
- 480   3            case 0x48,0x24,0x12:
- 481   3              SheetMid[Index] = '4';
- 482   3              break;
- 483   3            case 0x40,0x20,0x10:
- 484   3              SheetMid[Index] = '5';
+ 471   3            case 0x60:
+ 472   3            case 0x30:
+ 473   3            case 0x18:
+ 474   3              SheetMid[Index] = '1';
+ 475   3              break;
+ 476   3            case 0x56:
+ 477   3            case 0x2b:
+ 478   3            case 0x15:
+ 479   3              SheetMid[Index] = '2';
+ 480   3              break;
+ 481   3            case 0x4C:
+ 482   3            case 0x26:
+ 483   3            case 0x13:
+ 484   3              SheetMid[Index] = '3';
  485   3              break;
- 486   3            case 0x38,0x1C,0x0E:
- 487   3              SheetMid[Index] = '6';
- 488   3              break;
- 489   3            case 0x32,0x19,0x0D:
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 9   
+ 486   3            case 0x48:
+ 487   3            case 0x24:
+ 488   3            case 0x12:
+ 489   3              SheetMid[Index] = '4';
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 9   
 
- 490   3              SheetMid[Index] = '7';
- 491   3              break;
- 492   3            case 0xFF:
- 493   3              SheetMid[Index] = '#';
- 494   3              SheetDown[Index] = ' ';
- 495   3              SheetUp[Index] = ' ';
- 496   3              Index++;
- 497   3              Addr++;
- 498   3              Temp1 = SONG[Addr];
- 499   3              break;
- 500   3            default:
- 501   3              break;
- 502   3          }
- 503   2          if (Temp1 == 0xFF) continue;
- 504   2          if (Temp1>=0x32){
- 505   3            SheetDown[Index] = '.';
- 506   3            SheetUp[Index] = ' ';
- 507   3          } else if (Temp1<=0x18){
- 508   3            SheetUp[Index] = ' ';
- 509   3            SheetDown[Index] = ' ';
- 510   3          } else {
- 511   3            SheetUp[Index] = SheetDown[Index] = ' ';
- 512   3          }
- 513   2          Addr++;
- 514   2          Index++;
- 515   2          Temp2 = SONG[Addr];
- 516   2          if (Temp2 == 0x20) {
- 517   3            Addr++;
- 518   3            Temp1 = SONG[Addr];
- 519   3            continue;
- 520   3          }
- 521   2          else if (Temp2 == 0x10)
- 522   2            SheetDown[Index] = '-';
- 523   2          else if (Temp2 == 0x08)
- 524   2            SheetDown[Index] = '=';
- 525   2          else if (Temp2 == 0x30){
- 526   3            Index++;
- 527   3            SheetMid[Index] = '.';
- 528   3            SheetDown[Index] = ' ';
- 529   3            SheetUp[Index] = ' ';
- 530   3          } else if (Temp2 >= 0x40){
- 531   3            Temp2 = Temp2 - 0x20;
- 532   3            while (Temp2 >= 0x20){
- 533   4              Index++;
- 534   4              SheetMid[Index] = '-';
- 535   4              SheetDown[Index] = ' ';
- 536   4              SheetUp[Index] = ' ';
- 537   4              Temp2 = Temp2 - 0x20;
- 538   4            }
- 539   3          }
- 540   2          Addr++;
- 541   2          Temp1 = SONG[Addr];
- 542   2        }
- 543   1        return;
- 544   1      }
+ 490   3              break;
+ 491   3            case 0x40:
+ 492   3            case 0x20:
+ 493   3            case 0x10:
+ 494   3              SheetMid[Index] = '5';
+ 495   3              break;
+ 496   3            case 0x39:
+ 497   3            case 0x1C:
+ 498   3            case 0x0E:
+ 499   3              SheetMid[Index] = '6';
+ 500   3              break;
+ 501   3            case 0x32:
+ 502   3            case 0x19:
+ 503   3            case 0x0D:
+ 504   3              SheetMid[Index] = '7';
+ 505   3              break;
+ 506   3            default:
+ 507   3              Addr++;
+ 508   3              Temp1 = SONG[Addr];
+ 509   3              continue;
+ 510   3              break;
+ 511   3          }
+ 512   2          if (Temp1 == 0xFF) continue;
+ 513   2          if (Temp1 >=0x32){
+ 514   3            SheetDown[Index] = '.';
+ 515   3            SheetUp[Index] = ' ';
+ 516   3          } else if (Temp1 <= 0x18){
+ 517   3            SheetUp[Index] = '.';
+ 518   3            SheetDown[Index] = ' ';
+ 519   3          } else {
+ 520   3            SheetUp[Index] = ' ';
+ 521   3            SheetDown[Index] = ' ';
+ 522   3          }
+ 523   2          Addr++;
+ 524   2          Temp2 = SONG[Addr];
+ 525   2          if (Temp2 == 0x20) {
+ 526   3            Addr++;
+ 527   3            Index++;
+ 528   3            Temp1 = SONG[Addr];
+ 529   3            continue;
+ 530   3          }
+ 531   2          else if (Temp2 == 0x10)
+ 532   2            SheetDown[Index] = '-';
+ 533   2          else if (Temp2 == 0x08)
+ 534   2            SheetDown[Index] = '=';
+ 535   2          else if (Temp2 == 0x30){
+ 536   3            Index++;
+ 537   3            SheetMid[Index] = '.';
+ 538   3            SheetDown[Index] = ' ';
+ 539   3            SheetUp[Index] = ' ';
+ 540   3          } else if (Temp2 >= 0x40){
+ 541   3            Temp2 = Temp2 - 0x20;
+ 542   3            while (Temp2 >= 0x20){
+ 543   4              Index++;
+ 544   4              SheetMid[Index] = '-';
+ 545   4              SheetDown[Index] = ' ';
+ 546   4              SheetUp[Index] = ' ';
+ 547   4              Temp2 = Temp2 - 0x20;
+ 548   4            }
+ 549   3          }
+ 550   2          Addr++;
+ 551   2          Index++;
+C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 17:59:25 PAGE 10  
+
+ 552   2          Temp1 = SONG[Addr];
+ 553   2        }
+ 554   1        return;
+ 555   1      }
 *** WARNING C294 IN LINE 118 OF main.c: unreachable code
 *** WARNING C294 IN LINE 206 OF main.c: unreachable code
 *** WARNING C294 IN LINE 248 OF main.c: unreachable code
@@ -574,11 +587,9 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-C51 COMPILER V9.60.0.0   MAIN                                                              08/21/2020 16:48:32 PAGE 10  
-
-   CODE SIZE        =   4079    ----
+   CODE SIZE        =   4029    ----
    CONSTANT SIZE    =    463    ----
-   XDATA SIZE       =   3040      51
+   XDATA SIZE       =   1540      55
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

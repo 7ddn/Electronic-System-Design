@@ -15,11 +15,11 @@ unsigned char Count;
 double pitch = 7;
 char pitchFlag = 1;
 char currentPage = 1;
-unsigned char RECORDED[500];
-unsigned char SheetMid[500];
-unsigned char SheetUp[500];
-unsigned char SheetDown[500];
-unsigned int Sheet2Note[500];
+unsigned char RECORDED[250];
+unsigned char SheetMid[250];
+unsigned char SheetUp[250];
+unsigned char SheetDown[250];
+unsigned int Sheet2Note[250];
 
 
 
@@ -146,21 +146,21 @@ void Play_Song(unsigned char i)
 	unsigned char Temp1,Temp2;
 	unsigned int Addr,start;
 	unsigned int lineCount, loc;
-	unsigned char lrc[16];
+	unsigned char lrc[20];
 
-	Count = 0;      
 	lineCount = 1;
 	loc = 0;
-	start = INDEX[i-1];
+	start = INDEX[i];
 	Addr = start;  
 	GetSheet(Addr);
 	
-	strncpy(lrc, SheetUp, 16);
+	strncpy(lrc,  SheetUp, 16);
 	Disp(2,0,16,lrc);
 	strncpy(lrc, SheetMid, 16);
 	Disp(3,0,16,lrc);
 	strncpy(lrc, SheetDown, 16);
 	Disp(4,0,16,lrc);
+	Count = 0;    
 
 	while(1)
 	{
@@ -468,53 +468,63 @@ void GetSheet(int start){
 	while (Temp1 != 0x00){
 		Sheet2Note[Addr - start] = Index;
 		switch (Temp1){
-			case 0x60,0x30,0x18:
+			case 0x60:
+			case 0x30:
+			case 0x18:
 				SheetMid[Index] = '1';
 				break;
-			case 0x56,0x2b,0x15:
+			case 0x56:
+			case 0x2b:
+			case 0x15:
 				SheetMid[Index] = '2';
 				break;
-			case 0x4C,0x26,0x13:
+			case 0x4C:
+			case 0x26:
+			case 0x13:
 				SheetMid[Index] = '3';
 				break;
-			case 0x48,0x24,0x12:
+			case 0x48:
+			case 0x24:
+			case 0x12:
 				SheetMid[Index] = '4';
 				break;
-			case 0x40,0x20,0x10:
+			case 0x40:
+			case 0x20:
+			case 0x10:
 				SheetMid[Index] = '5';
 				break;
-			case 0x38,0x1C,0x0E:
+			case 0x39:
+			case 0x1C:
+			case 0x0E:
 				SheetMid[Index] = '6';
 				break;
-			case 0x32,0x19,0x0D:
+			case 0x32:
+			case 0x19:
+			case 0x0D:
 				SheetMid[Index] = '7';
 				break;
-			case 0xFF:
-				SheetMid[Index] = '#';
-				SheetDown[Index] = ' ';
-				SheetUp[Index] = ' ';
-				Index++;
+			default:
 				Addr++;
 				Temp1 = SONG[Addr];
-				break;
-			default:
+				continue;
 				break;
 		}
 		if (Temp1 == 0xFF) continue;
-		if (Temp1>=0x32){
+		if (Temp1 >=0x32){
 			SheetDown[Index] = '.';
 			SheetUp[Index] = ' ';
-		} else if (Temp1<=0x18){
-			SheetUp[Index] = ' ';
+		} else if (Temp1 <= 0x18){
+			SheetUp[Index] = '.';
 			SheetDown[Index] = ' ';
 		} else {
-			SheetUp[Index] = SheetDown[Index] = ' ';
+			SheetUp[Index] = ' ';
+			SheetDown[Index] = ' ';
 		}
 		Addr++;
-		Index++;
 		Temp2 = SONG[Addr];
 		if (Temp2 == 0x20) {
 			Addr++;
+			Index++;
 			Temp1 = SONG[Addr];
 			continue;
 		}
@@ -538,6 +548,7 @@ void GetSheet(int start){
 			}
 		}
 		Addr++;
+		Index++;
 		Temp1 = SONG[Addr];
 	}
 	return;
