@@ -19,6 +19,7 @@ unsigned char RECORDED[500];
 unsigned char SheetMid[500];
 unsigned char SheetUp[500];
 unsigned char SheetDown[500];
+unsigned int Sheet2Note[500];
 
 
 
@@ -142,40 +143,65 @@ void s1_s2_check(void)
 /****************播放音乐*************************/
 void Play_Song(unsigned char i)
 {
-	 unsigned char Temp1,Temp2;
-	 unsigned int Addr;
-	 Count = 0;      
-	 Addr = i * 217;  
-	 while(1)
-	 {
+	unsigned char Temp1,Temp2;
+	unsigned int Addr,start;
+	unsigned int lineCount, loc;
+	unsigned char lrc[16];
+
+	Count = 0;      
+	lineCount = 1;
+	loc = 0;
+	start = INDEX[i-1];
+	Addr = start;  
+	GetSheet(Addr);
+	
+	strncpy(lrc, SheetUp, 16);
+	Disp(2,0,16,lrc);
+	strncpy(lrc, SheetMid, 16);
+	Disp(3,0,16,lrc);
+	strncpy(lrc, SheetDown, 16);
+	Disp(4,0,16,lrc);
+
+	while(1)
+	{
 		
-	  	 Temp1 = SONG[Addr++];
-	     if ( Temp1 == 0xFF )         
-	     {
-		      TR0 = 0;                 
-		      Delay_xMs(100);
-	     }
-	     else if ( Temp1 == 0x00 )   
-	     {
-	      	return;
-	     }
-	     else
-	     {
-		      Temp2 = SONG[Addr++];
-		      TR0 = 1;
-			  while(1)
-			  {
-			     bee_Speak = ~bee_Speak;
-			     Delay_xMs(Temp1);
-			     if ( Temp2 == Count )
-			     {
+	 	Temp1 = SONG[Addr++];
+	    if ( Temp1 == 0xFF )
+	    {
+		    TR0 = 0;                 
+		    Delay_xMs(100);
+	    }
+	    else if ( Temp1 == 0x00 )   
+	    {
+	     	return;
+	    }
+	    else
+	    {
+		    Temp2 = SONG[Addr++];
+		    TR0 = 1;
+			while(1)
+			{
+			    bee_Speak = ~bee_Speak;
+			    Delay_xMs(Temp1);
+			    if ( Temp2 == Count )
+			    {
+					if (Sheet2Note[Addr - start] > lineCount*16){
+						loc = loc + 16;
+						lineCount++;
+						strncpy(lrc, SheetUp+loc, 16);
+						Disp(2,0,16,lrc);
+						strncpy(lrc, SheetMid+loc, 16);
+						Disp(3,0,16,lrc);
+						strncpy(lrc, SheetDown+loc, 16);
+						Disp(4,0,16,lrc);
+					}
 			        Count = 0;
 			        break;
-			     }
-				 KeyIO=0xF0;
-				 if ((P1&0xf0)!=0xf0) return;
-			  }
-	     }
+			    }
+				KeyIO=0xF0;
+				if ((P1&0xf0)!=0xf0) return;
+			}
+	    }
 	}
 	bee_Speak = 0;	//关闭蜂鸣器
 }
@@ -258,7 +284,6 @@ void MenuDisplay(int page){
 void PlayMusic(){
 	Ini_Lcd();
 	Disp(1,2,8,"音乐播放");
-	Disp(4,1,12,"按任意键返回");
 	Time0_Init();
 	Play_Song(0);
 }
@@ -392,7 +417,6 @@ void PlayRecord()
 {
 	unsigned char Temp1,Temp2;
 	unsigned int Addr;
-	unsigned int totalCount;
 
 	s1_s2_check();
 	Ini_Lcd();
@@ -400,7 +424,6 @@ void PlayRecord()
 	Disp(4,1,12,"按任意键返回");
 
 	Count = 0;      
-	totalCount = 0;
 	Time0_Init();
 	Addr = 0;  
 	while(1)
@@ -418,7 +441,6 @@ void PlayRecord()
 	    else
 	    {
 		    Temp2 = RECORDED[Addr++];
-			totalCount = totalCount + Temp2;
 		    TR0 = 1;
 			while(1)
 			{
@@ -437,66 +459,81 @@ void PlayRecord()
 	bee_Speak = 0;	//关闭蜂鸣器
 }
 
-void getSheet(int start){
+void GetSheet(int start){
 	unsigned char Temp1,Temp2;
-	unsigned int Addr, INDEX;
+	unsigned int Addr, Index;
 
-	Addr = 0; INDEX = 0;
+	Addr = start; Index = 0;
 	Temp1 = SONG[Addr];
 	while (Temp1 != 0x00){
+		Sheet2Note[Addr - start] = Index;
 		switch (Temp1){
 			case 0x60,0x30,0x18:
-				SheetMid[INDEX] = '1';
+				SheetMid[Index] = '1';
 				break;
 			case 0x56,0x2b,0x15:
-				SheetMid[INDEX] = '2';
+				SheetMid[Index] = '2';
 				break;
 			case 0x4C,0x26,0x13:
-				SheetMid[INDEX] = '3';
+				SheetMid[Index] = '3';
 				break;
 			case 0x48,0x24,0x12:
-				SheetMid[INDEX] = '4';
+				SheetMid[Index] = '4';
 				break;
 			case 0x40,0x20,0x10:
-				SheetMid[INDEX] = '5';
+				SheetMid[Index] = '5';
 				break;
 			case 0x38,0x1C,0x0E:
-				SheetMid[INDEX] = '6';
+				SheetMid[Index] = '6';
 				break;
 			case 0x32,0x19,0x0D:
-				SheetMid[INDEX] = '7';
+				SheetMid[Index] = '7';
+				break;
+			case 0xFF:
+				SheetMid[Index] = '#';
+				SheetDown[Index] = ' ';
+				SheetUp[Index] = ' ';
+				Index++;
+				Addr++;
+				Temp1 = SONG[Addr];
 				break;
 			default:
 				break;
 		}
+		if (Temp1 == 0xFF) continue;
 		if (Temp1>=0x32){
-			SheetDown[INDEX] = '.';
-			SheetUp[INDEX] = ' ';
+			SheetDown[Index] = '.';
+			SheetUp[Index] = ' ';
 		} else if (Temp1<=0x18){
-			SheetUp[INDEX] = ' ';
-			SheetDown[INDEX] = ' ';
+			SheetUp[Index] = ' ';
+			SheetDown[Index] = ' ';
 		} else {
-			SheetUp[INDEX] = SheetDown[INDEX] = ' ';
+			SheetUp[Index] = SheetDown[Index] = ' ';
 		}
 		Addr++;
+		Index++;
 		Temp2 = SONG[Addr];
-		if (Temp2 == 0x20) continue;
+		if (Temp2 == 0x20) {
+			Addr++;
+			Temp1 = SONG[Addr];
+			continue;
+		}
 		else if (Temp2 == 0x10)
-			SheetDown[INDEX] = '-';
+			SheetDown[Index] = '-';
 		else if (Temp2 == 0x08)
-			SheetDown[INDEX] = '=';
+			SheetDown[Index] = '=';
 		else if (Temp2 == 0x30){
-			INDEX++;
-			SheetMid[INDEX] = '.';
-			SheetDown[INDEX] = ' ';
-			SheetUp[INDEX] = ' ';
+			Index++;
+			SheetMid[Index] = '.';
+			SheetDown[Index] = ' ';
+			SheetUp[Index] = ' ';
 		} else if (Temp2 >= 0x40){
 			Temp2 = Temp2 - 0x20;
 			while (Temp2 >= 0x20){
-				INDEX++;
-				SheetMid[INDEX] = '-';
-				SheetDown[INDEX] = ' ';
-				SheetUp[INDEX] = ' ';
+				Index++;
+				SheetMid[Index] = '-';
+				SheetDown[Index] = ' ';
+				SheetUp[Index] = ' ';
 				Temp2 = Temp2 - 0x20;
 			}
 		}
