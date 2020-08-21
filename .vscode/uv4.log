@@ -1,9 +1,9 @@
 Build target 'sys_pia'
 compiling main.c...
-main.c(119): warning C294: unreachable code
-main.c(207): warning C294: unreachable code
-main.c(249): warning C294: unreachable code
-main.c(511): warning C294: unreachable code
+main.c(168): warning C294: unreachable code
+main.c(256): warning C294: unreachable code
+main.c(298): warning C294: unreachable code
+main.c(565): warning C294: unreachable code
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?CTRL_PORT_CHECK?MAIN
@@ -38,7 +38,7 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_DELAYNUS?DISPLAY
 
-Program Size: data=9.0 xdata=1620 code=7991
+Program Size: data=9.0 xdata=1637 code=10131
 creating hex file from "sys_pia"...
 "sys_pia" - 0 Error(s), 15 Warning(s).
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01

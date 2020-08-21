@@ -8,6 +8,7 @@
 #include "display.h"
 #include "sing.h"
 #include "string.h"
+#include <stdlib.h>
 
 uchar port_status;
 uchar key;
@@ -26,6 +27,40 @@ unsigned int Sheet2Note[250];
 int lastStartCount = -1;
 int lastEndCount = 0;
 uchar lastNote = 0x00;
+
+char *itoa(int val, char *buf, unsigned radix)
+{
+    char *p;             
+    char *firstdig;      
+    char temp;           
+    unsigned digval;     
+    p = buf;
+    if(val <0)
+    {
+        *p++ = '-';
+        val = (unsigned long)(-(long)val);
+    }
+    firstdig = p; 
+    do{
+        digval = (unsigned)(val % radix);
+        val /= radix;
+       
+        if  (digval > 9)
+            *p++ = (char)(digval - 10 + 'a'); 
+        else
+            *p++ = (char)(digval + '0');      
+    }while(val > 0);
+   
+    *p-- = '\0';         
+    do{
+        temp = *p;
+        *p = *firstdig;
+        *firstdig = temp;
+        --p;
+        ++firstdig;        
+    }while(firstdig < p);  
+    return buf;
+}
 
 void Time0_Int() interrupt 1
 {
@@ -51,6 +86,7 @@ void Record();
 int Recordnote(uchar, int, int);
 void PlayRecord();
 void GetSheet(int);
+void TestMode();
 
 void main()
 {
@@ -75,38 +111,51 @@ void main()
 		P4M0=0x00;
 		Ini_Lcd();//液晶初始化子程序
 		MenuDisplay(currentPage);
-		KeyIO = 0xF0;
 		while(1){
+			KeyIO = 0xF0;
 			s1_s2_check();
 			if ((P1&0xF0)!=0xF0){
 				Delay_xMs(100);
 				if((KeyIO&0xF0)!=0xF0){
 					key = scankey();
+					while((KeyIO&0xF0)!=0xF0) KeyIO = 0xF0;
 					switch (key)
 					{
 					case 11:
-						PlayMusic();
+						PlayMusic(); //音乐播放
 						bee_Speak = 0;
 						MenuDisplay(currentPage);
 						break;
 					case 12:
-						ManualPlay();
+						ManualPlay(); //演奏模式
 						MenuDisplay(currentPage);
 						break;
 					case 13:
-						currentPage ++;
+						currentPage = 2; //1到2
 						MenuDisplay(currentPage);
 						break;
 					case 14:
-						Record();
+						Record(); // 录音模式
 						MenuDisplay(currentPage);
 						break;
 					case 21:
-						PlayRecord();
+						PlayRecord(); // 播放录音
 						MenuDisplay(currentPage);
 						break;
 					case 22:
-						currentPage --;
+						currentPage = 1; // 2到1
+						MenuDisplay(currentPage);
+						break;
+					case 23:
+						currentPage = 3; // 2到3
+						MenuDisplay(currentPage);
+						break;
+					case 24:
+						TestMode();
+						MenuDisplay(currentPage);
+						break;
+					case 31:
+						currentPage = 2; // 3到2
 						MenuDisplay(currentPage);
 						break;
 					default:
@@ -272,10 +321,15 @@ void MenuDisplay(int page){
 		Disp(4,0,8,"3.下一页");
 		break;
 	case 2:
-		Disp(1,3,4,"菜单");
-		Disp(2,0,10,"4.录音模式");
-		Disp(3,0,10,"5.播放录音");
-		Disp(4,0,8,"6.上一页");
+		Disp(1,0,10,"4.录音模式");
+		Disp(2,0,10,"5.播放录音");
+		Disp(3,0,8,"6.上一页");
+		Disp(4,0,8,"7.下一页");
+		break;
+	case 3:
+		Disp(1,0,10,"8.练习模式");
+		Disp(2,0,8,"9.上一页");
+		break;
 	default:
 		break;
 	}
@@ -337,8 +391,6 @@ void ManualPlay(){
 	s1_s2_check();
 	Ini_Lcd();
 	Disp(1,2,8,"演奏模式");
-	if (pitch!=0) Disp(2,0,10,"2.降低音高");
-	if (pitch!=14) Disp(3,0,10,"3.提高音高");
 	Disp(4,1,12,"按任意键返回");
 	while(1) {
 		KeyIO=0xF0;
@@ -346,29 +398,21 @@ void ManualPlay(){
 			Delay_xMs(100);
 			if((KeyIO&0xF0)!=0xF0){
 				key = scankey();
-				switch (key){
-					case 12:
-						if (!pitchFlag) break;
-						if (pitch>0) pitch-=7;
-						if (pitch==0) Disp(2,0,16,"音高已经是最低了");
-						Disp(3,0,10,"3.提高音高");
-						pitchFlag = 0;
-						break;
-					case 13:
-						if (!pitchFlag) break;
-						if (pitch<14) pitch+=7;
-						if (pitch==14) Disp(3,0,16,"音高已经是最高了");
-						Disp(2,0,10,"2.降低音高");
-						pitchFlag = 0;
-						break;
-					default:
-						return;
-						break;
-				}
+				return;
+				break;
 			}
 			Delay_xMs(100);
 		}
 	 	OPT_CHECK = 0xFF;
+		s1_s2_check();
+		pitch = 7 + DLED_2*7 - DLED_1*7;
+		if (pitch == 14){
+			Disp(2,3,4,"高音");
+		} else if (pitch == 7){
+			Disp(2,3,4,"中音");
+		} else if (pitch == 0){
+			Disp(2,3,4,"低音");
+		}
 	 	if (OPT_CHECK&0x01) Playnote(0x01, 7+pitch);
 		 else if (OPT_CHECK&0x02) Playnote(0x02, 6+pitch);
 		 else if (OPT_CHECK&0x04) Playnote(0x04, 5+pitch);
@@ -410,8 +454,8 @@ void Record(){
 		}
 	}
 	memset(RECORDED,0x00,sizeof(RECORDED));
-	Disp(2,0,6,"录音中");
-	Disp(3,0,10,"2.结束录音");
+	Ini_Lcd();
+	Disp(4,0,16,"按任意键结束录音");
 	Count = 0;
 	Time0_Init();
 	while(1){
@@ -420,25 +464,30 @@ void Record(){
 			Delay_xMs(100);
 			if((KeyIO&0xF0)!=0xF0){
 				key = scankey();
-				switch (key){
-					case 12: 
-						Disp(3,0,8,"录音完成");
-						RECORDED[currentIndex] = lastNote;
-						RECORDED[currentIndex+1] = lastEndCount - lastStartCount; 
-						return;
-					default: return;
-				}
+				Disp(3,0,8,"录音完成");
+				RECORDED[currentIndex] = lastNote;
+				RECORDED[currentIndex+1] = lastEndCount - lastStartCount; 
+				return;
 			}
 			Delay_xMs(100);
 		}
 		OPT_CHECK = 0xFF;
+		s1_s2_check();
+		pitch = 7 + DLED_2*7 - DLED_1*7;
+		if (pitch == 14){
+			Disp(2,3,4,"高音");
+		} else if (pitch == 7){
+			Disp(2,3,4,"中音");
+		} else if (pitch == 0){
+			Disp(2,3,4,"低音");
+		}
 	 	if (OPT_CHECK&0x01) currentIndex = Recordnote(0x01, 7+pitch, currentIndex);
-		 else if (OPT_CHECK&0x02) currentIndex  = Recordnote(0x02, 6+pitch, currentIndex);
-		 else if (OPT_CHECK&0x04) currentIndex  = Recordnote(0x04, 5+pitch, currentIndex);
-		 else if (OPT_CHECK&0x08) currentIndex  = Recordnote(0x08, 4+pitch, currentIndex);
-		 else if (OPT_CHECK&0x10) currentIndex  = Recordnote(0x10, 3+pitch, currentIndex);
-		 else if (OPT_CHECK&0x20) currentIndex  = Recordnote(0x20, 2+pitch, currentIndex);
-		 else if (OPT_CHECK&0x40) currentIndex  = Recordnote(0x40, 1+pitch, currentIndex);	
+		else if (OPT_CHECK&0x02) currentIndex  = Recordnote(0x02, 6+pitch, currentIndex);
+		else if (OPT_CHECK&0x04) currentIndex  = Recordnote(0x04, 5+pitch, currentIndex);
+		else if (OPT_CHECK&0x08) currentIndex  = Recordnote(0x08, 4+pitch, currentIndex);
+		else if (OPT_CHECK&0x10) currentIndex  = Recordnote(0x10, 3+pitch, currentIndex);
+		else if (OPT_CHECK&0x20) currentIndex  = Recordnote(0x20, 2+pitch, currentIndex);
+		else if (OPT_CHECK&0x40) currentIndex  = Recordnote(0x40, 1+pitch, currentIndex);	
 	}
 	
 }
@@ -478,6 +527,11 @@ void PlayRecord()
 	Time0_Init();
 	Addr = 2;  
 	Count = 0; 
+	Temp1 = RECORDED[Addr];
+	if (Temp1 == 0x00){
+		Disp(1,0,6,"ERROR!");
+		while(1);
+	}
 	while(1)
 	{
 		Temp1 = RECORDED[Addr++];
@@ -564,7 +618,7 @@ void GetSheet(int start){
 				break;
 		}
 		if (Temp1 == 0xFF) continue;
-		if (Temp1 >=0x32){
+		if (Temp1 >= 0x32){
 			SheetDown[Index] = '.';
 			SheetUp[Index] = ' ';
 		} else if (Temp1 <= 0x18){
@@ -607,3 +661,160 @@ void GetSheet(int start){
 	}
 	return;
 }
+
+char Testnote(uchar flag, int i, int answer){
+	
+	OPT_CHECK = 0xFF;
+	while (OPT_CHECK&flag){
+		bee_Speak = ~bee_Speak;
+		Delay_xMs(NOTE[i-1]);
+		OPT_CHECK = 0xFF;
+	}
+	if (NOTE[i-1] == answer) return 0;
+	return 1;
+}
+
+void TestSong(unsigned int i){
+	unsigned char Temp1;
+	unsigned int Addr,start;
+	unsigned int lineCount, loc;
+	unsigned char lrc[20];
+	unsigned int errorCount = 0;
+	char errorCountStr[10];
+	char errorFlag = 0;
+
+	lineCount = 1;
+	loc = 0;
+	start = INDEX[i];
+	Addr = start;  
+	GetSheet(Addr);
+	
+	strncpy(lrc,  SheetUp, 16);
+	Disp(2,0,16,lrc);
+	strncpy(lrc, SheetMid, 16);
+	Disp(3,0,16,lrc);
+	strncpy(lrc, SheetDown, 16);
+	Disp(4,0,16,lrc); 
+
+	Temp1 = SONG[Addr];
+	while(Temp1!=0x00){
+		if (Temp1 == 0xFF){
+			Addr++;
+			Temp1 = SONG[Addr];
+		}
+		while (1){
+			s1_s2_check();
+			pitch = DLED_1*7-DLED_2*7;
+			OPT_CHECK = 0xFF;
+			if (OPT_CHECK&0x01) {
+				errorFlag = Testnote(0x01, 7+pitch, Temp1);
+				break;
+			}
+			else if (OPT_CHECK&0x02) {
+				errorFlag = Testnote(0x02, 6+pitch, Temp1);
+				break;
+			}
+			else if (OPT_CHECK&0x04) {
+				errorFlag = Testnote(0x04, 5+pitch, Temp1);
+				break;
+			}
+			else if (OPT_CHECK&0x08) {
+				errorFlag = Testnote(0x08, 4+pitch, Temp1);
+				break;
+			}
+			else if (OPT_CHECK&0x10) {
+				errorFlag = Testnote(0x10, 3+pitch, Temp1);
+				break;
+			}
+			else if (OPT_CHECK&0x20) {
+				errorFlag = Testnote(0x20, 2+pitch, Temp1);
+				break;
+			}
+			else if (OPT_CHECK&0x40) {
+				errorFlag = Testnote(0x40, 1+pitch, Temp1);
+				break;
+			}
+		}
+		if (errorFlag){
+			errorCount++;
+			Disp(1,0,6,"Error!");
+		} else {
+			Disp(1,0,6,"Right!");
+		}
+		Addr += 2;
+		Temp1 = SONG[Addr];
+		if (Sheet2Note[Addr - start] > lineCount*16){
+			loc = loc + 16;
+			lineCount++;
+			strncpy(lrc, SheetUp+loc, 16);
+			Disp(2,0,16,lrc);
+			strncpy(lrc, SheetMid+loc, 16);
+			Disp(3,0,16,lrc);
+			strncpy(lrc, SheetDown+loc, 16);
+			Disp(4,0,16,lrc);
+		}
+	}
+	Ini_Lcd();
+	Disp(1,0,16,"Error Number is");
+	itoa(errorCount, errorCountStr, 10);
+	Disp(2,0,sizeof(errorCountStr), errorCountStr);	
+	while(1){
+		KeyIO=0xF0;
+		if ((P1&0xf0)!=0xf0) {
+			Delay_xMs(100);
+			if((KeyIO&0xF0)!=0xF0){
+				return;
+			}
+			Delay_xMs(100);
+		}	
+	}
+	
+}
+
+// 练习模式
+void TestMode(){
+	Ini_Lcd();
+	Disp(1,0,8,"1.新宝岛");
+	Disp(2,0,6,"2.爱河");
+	Disp(3,0,10,"3.祝你平安");
+	Disp(4,0,10,"4.天空之城");
+
+	KeyIO = 0xF0;
+	while(1){
+		s1_s2_check();
+		if ((P1&0xF0)!=0xF0){
+			Delay_xMs(100);
+			if((KeyIO&0xF0)!=0xF0){
+				key = scankey();
+				switch (key)
+				{
+				case 11:
+					Ini_Lcd();
+					TestSong(0);
+					return;
+					break;
+				case 12:
+					Ini_Lcd();
+					TestSong(1);
+					return;
+					break;
+				case 13:
+					Ini_Lcd();
+					TestSong(2);
+					return;
+					break;
+				case 14:
+					Ini_Lcd();
+					TestSong(3);
+					return;
+					break;
+				default:
+					return;
+					break;
+				}
+			}
+			Delay_xMs(2500);
+		}
+	}
+}
+
