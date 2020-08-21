@@ -86,6 +86,7 @@ void main()
 					{
 					case 11:
 						PlayMusic();
+						bee_Speak = 0;
 						MenuDisplay(currentPage);
 						break;
 					case 12:
@@ -283,9 +284,53 @@ void MenuDisplay(int page){
 
 void PlayMusic(){
 	Ini_Lcd();
-	Disp(1,2,8,"音乐播放");
+	Disp(1,0,8,"1.新宝岛");
+	Disp(2,0,6,"2.爱河");
+	Disp(3,0,10,"3.祝你平安");
+	Disp(4,0,10,"4.天空之城");
+
 	Time0_Init();
-	Play_Song(0);
+	KeyIO = 0xF0;
+	while(1){
+		s1_s2_check();
+		if ((P1&0xF0)!=0xF0){
+			Delay_xMs(100);
+			if((KeyIO&0xF0)!=0xF0){
+				key = scankey();
+				switch (key)
+				{
+				case 11:
+					Ini_Lcd();
+					Disp(1,0,8,"1.新宝岛");
+					Play_Song(0);
+					return;
+					break;
+				case 12:
+					Ini_Lcd();
+					Disp(1,0,6,"2.爱河");
+					Play_Song(1);
+					return;
+					break;
+				case 13:
+					Ini_Lcd();
+					Disp(1,0,10,"3.祝你平安");
+					Play_Song(2);
+					return;
+					break;
+				case 14:
+					Ini_Lcd();
+					Disp(1,0,10,"4.天空之城");
+					Play_Song(3);
+					return;
+					break;
+				default:
+					return;
+					break;
+				}
+			}
+			Delay_xMs(2500);
+		}
+	}
 }
 
 void ManualPlay(){
@@ -333,6 +378,8 @@ void ManualPlay(){
 		 else if (OPT_CHECK&0x40) Playnote(0x40, 1+pitch);	
 	}
 }
+
+// 录制
 
 void Record(){
 	char continueFlag = 0;
@@ -396,6 +443,8 @@ void Record(){
 	
 }
 
+//音符录制
+
 int Recordnote(uchar flag, int i, int index){
 	if (lastStartCount != -1){
 		RECORDED[index] = lastNote;
@@ -413,6 +462,8 @@ int Recordnote(uchar flag, int i, int index){
 	return index+2;
 }
 
+// 录音播放
+
 void PlayRecord()
 {
 	unsigned char Temp1,Temp2;
@@ -423,9 +474,10 @@ void PlayRecord()
 	Disp(1,2,8,"播放录音");
 	Disp(4,1,12,"按任意键返回");
 
-	Count = 0;      
+	     
 	Time0_Init();
-	Addr = 0;  
+	Addr = 2;  
+	Count = 0; 
 	while(1)
 	{
 		Temp1 = RECORDED[Addr++];
@@ -458,6 +510,8 @@ void PlayRecord()
 	}
 	bee_Speak = 0;	//关闭蜂鸣器
 }
+
+// 简谱生成
 
 void GetSheet(int start){
 	unsigned char Temp1,Temp2;
